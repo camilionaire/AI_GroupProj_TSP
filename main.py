@@ -50,16 +50,16 @@ def decision(prob):
 def pass_filename(option1, option2):
     my_table = []
     if option1 == 1:
-        my_table = np.loadtxt('five19.txt')
+        my_table = np.loadtxt('./datasets/five19.txt')
         print("File loaded: five19.txt")
     elif option1 == 2:
-        my_table = np.loadtxt('twentysix937.txt')
+        my_table = np.loadtxt('./datasets/twentysix937.txt')
         print("File loaded: ftwentysix937.txt")
     elif option1 == 3:
-        my_table = np.loadtxt('fortytwo699.txt')
+        my_table = np.loadtxt('./datasets/fortytwo699.txt')
         print("File loaded: fortytwo699.txt")
     elif option1 == 4:
-        my_table = np.loadtxt('fortyeight33523.txt')
+        my_table = np.loadtxt('./datasets/fortyeight33523.txt')
         print("File loaded: fortyeight33523.txt")
     else:
         print("Invalid input for dataset selection")
