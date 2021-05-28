@@ -77,6 +77,7 @@ def call_algorithm(option2, my_table):
     elif option2 == 3:
         print("calling ACO")
 
+
 def main():
     # uses np for numpy, loads the file and makes a table!
     # this is the command right after python ./main.py ________ <here
@@ -89,6 +90,7 @@ def main():
     option2 = input("Please choose the algorithm to solve the TSP: \n 1. Genetic Algorithm. \n 2. Simulated Annealing Algorithm.\n 3. Ant colony optimization \n")
 
     pass_filename(int(option1), int(option2))
+
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+import time
 
 
 class Population:
@@ -77,6 +78,7 @@ class Population:
 
 
 def ga_main(my_table):
+    start = time.time()
     print(my_table)
     pop = []
     cities = []
@@ -90,3 +92,5 @@ def ga_main(my_table):
         population.evaluate()
         population.crossover_mutate()
     population.get_best()
+    elapsed = time.time() - start
+    print("\n\nScript execution time: {} seconds".format(elapsed))
