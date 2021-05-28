@@ -1,6 +1,7 @@
-from main import *
+# from main import *
 import random
 import math
+from tools import *
 
 
 def simuAnneal(table):
