@@ -53,7 +53,7 @@ def pass_filename(option1, option2):
         my_table = np.loadtxt('five19.txt')
         print("File loaded: five19.txt")
     elif option1 == 2:
-        my_table = np.loadtxt('ftwentysix937.txt')
+        my_table = np.loadtxt('twentysix937.txt')
         print("File loaded: ftwentysix937.txt")
     elif option1 == 3:
         my_table = np.loadtxt('fortytwo699.txt')
