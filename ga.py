@@ -76,9 +76,7 @@ class Population:
         return self.pop
 
 
-
-def main():
-    my_table = np.loadtxt('five19.txt')
+def ga_main(my_table):
     print(my_table)
     pop = []
     cities = []
@@ -92,8 +90,3 @@ def main():
         population.evaluate()
         population.crossover_mutate()
     population.get_best()
-
-
-
-if __name__ == "__main__":
-    main()
