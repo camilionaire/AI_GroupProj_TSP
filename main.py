@@ -7,6 +7,7 @@
 import numpy as np
 import random
 import sys
+import PySimpleGUI as sg
 from simAnTSP import *
 from ga import ga_main
 
@@ -86,10 +87,34 @@ def main():
     # else:
     #
 
-    option1 = input("Please select the number of cities: \n 1. 5: (Best result: 19) \n 2. 26: (Best result: 937)\n 3. 42: (Best result: 699) \n 4. 48: (Best result: 33523) \n")
-    option2 = input("Please choose the algorithm to solve the TSP: \n 1. Genetic Algorithm. \n 2. Simulated Annealing Algorithm.\n 3. Ant colony optimization \n")
+    event, values = sg.Window('Please select the number of cities: \n', [[sg.Text('Select one -> '), sg.Listbox(['1. 5: (Best result: 19)', '2. 26: (Best result: 937)', '3. 42: (Best result: 699)', '4. 48: (Best result: 33523)'], size = (30,4), key='citynum')], [sg.Button('Ok'), sg.Button('Cancel')]]).read(close=True)
+    if event == 'Ok':
+        print(values['citynum'])
+        num = str(values['citynum'])
+        option1 = num[2:3]
+        print(num)
+        print(option1)
+        event2, values2 = sg.Window('Please choose the algorithm to solve the TSP: \n', [[sg.Text('Select one -> '), sg.Listbox(['1. Genetic Algorithm.', '2. Simulated Annealing Algorithm.', '3. Ant Colony Optimization'], size = (30,4), key='algorithm')], [sg.Button('Ok'), sg.Button('Cancel')]]).read(close=True)
+        if event2 == 'Ok':
+            print(values2['algorithm'])
+            num2 = str(values2['algorithm'])
+            option2 = num2[2:3]
+            print(num2)
+            print(option2)
+            pass_filename(int(option1), int(option2))
+        else:
+            sg.popup_cancel('user cancelled')
+            exit()
+    else:
+        sg.popup_cancel('user cancelled')
+        exit()
 
-    pass_filename(int(option1), int(option2))
+
+    #pass_filename(option1, option2)
+    #option1 = input("Please select the number of cities: \n 1. 5: (Best result: 19) \n 2. 26: (Best result: 937)\n 3. 42: (Best result: 699) \n 4. 48: (Best result: 33523) \n")
+    #option2 = input("Please choose the algorithm to solve the TSP: \n 1. Genetic Algorithm. \n 2. Simulated Annealing Algorithm.\n 3. Ant colony optimization \n")
+
+    #pass_filename(int(option1), int(option2))
 
 
 if __name__ == "__main__":
