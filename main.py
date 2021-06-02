@@ -9,7 +9,10 @@ import random
 import sys
 import PySimpleGUI as sg
 from simAnTSP import *
+from aco import aco_main
 from ga import ga_main
+from antColony import *
+
 
 # finds the current tour length.
 def findTourLen(arr, table):
@@ -18,8 +21,9 @@ def findTourLen(arr, table):
         if i == (len(arr) - 1):
             total = total + table[arr[i]][arr[0]]
         else:
-            total = total + table[arr[i]][arr[i+1]]
+            total = total + table[arr[i]][arr[i + 1]]
     return total
+
 
 # creates a random initial arrangement of size
 def createRandoArr(size):
@@ -77,6 +81,31 @@ def call_algorithm(option2, my_table):
         print(findTourLen(hillClimb, my_table))
     elif option2 == 3:
         print("calling ACO")
+        # hillClimb = run(my_table)
+        # print(findTourLen(hillClimb, my_table))
+
+
+        event3, values3 = sg.Window('Please choose the ACO mode to solve the TSP: \n',
+                            [[sg.Text('Select one -> '), sg.Listbox(
+                                ['1. ACS',
+                                 '2. MaxMin',
+                                 '3. Elitist'],
+                                size=(30, 4),
+                                key='mode')],
+                             [sg.Button('Ok'),
+                              sg.Button('Cancel')]]).read(
+        close=True)
+        if event3 == 'Ok':
+            print(values3['mode'])
+            num3 = str(values3['mode'])
+            option3 = num3[2:3]
+            print(num3)
+            print(option3)
+            print('ok')
+            aco_main(int(option3), my_table)
+        else:
+            sg.popup_cancel('user cancelled')
+            exit()
 
 
 def main():
@@ -87,14 +116,26 @@ def main():
     # else:
     #
 
-    event, values = sg.Window('Please select the number of cities: \n', [[sg.Text('Select one -> '), sg.Listbox(['1. 5: (Best result: 19)', '2. 26: (Best result: 937)', '3. 42: (Best result: 699)', '4. 48: (Best result: 33523)'], size = (30,4), key='citynum')], [sg.Button('Ok'), sg.Button('Cancel')]]).read(close=True)
+    event, values = sg.Window('Please select the number of cities: \n', [[sg.Text('Select one -> '), sg.Listbox(
+        ['1. 5: (Best result: 19)', '2. 26: (Best result: 937)', '3. 42: (Best result: 699)',
+         '4. 48: (Best result: 33523)'], size=(30, 4), key='citynum')], [sg.Button('Ok'), sg.Button('Cancel')]]).read(
+        close=True)
     if event == 'Ok':
         print(values['citynum'])
         num = str(values['citynum'])
         option1 = num[2:3]
         print(num)
         print(option1)
-        event2, values2 = sg.Window('Please choose the algorithm to solve the TSP: \n', [[sg.Text('Select one -> '), sg.Listbox(['1. Genetic Algorithm.', '2. Simulated Annealing Algorithm.', '3. Ant Colony Optimization'], size = (30,4), key='algorithm')], [sg.Button('Ok'), sg.Button('Cancel')]]).read(close=True)
+        event2, values2 = sg.Window('Please choose the algorithm to solve the TSP: \n',
+                                    [[sg.Text('Select one -> '), sg.Listbox(
+                                        ['1. Genetic Algorithm.',
+                                         '2. Simulated Annealing Algorithm.',
+                                         '3. Ant Colony Optimization'],
+                                        size=(30, 4),
+                                        key='algorithm')],
+                                     [sg.Button('Ok'),
+                                      sg.Button('Cancel')]]).read(
+            close=True)
         if event2 == 'Ok':
             print(values2['algorithm'])
             num2 = str(values2['algorithm'])
@@ -109,12 +150,11 @@ def main():
         sg.popup_cancel('user cancelled')
         exit()
 
+    # pass_filename(option1, option2)
+    # option1 = input("Please select the number of cities: \n 1. 5: (Best result: 19) \n 2. 26: (Best result: 937)\n 3. 42: (Best result: 699) \n 4. 48: (Best result: 33523) \n")
+    # option2 = input("Please choose the algorithm to solve the TSP: \n 1. Genetic Algorithm. \n 2. Simulated Annealing Algorithm.\n 3. Ant colony optimization \n")
 
-    #pass_filename(option1, option2)
-    #option1 = input("Please select the number of cities: \n 1. 5: (Best result: 19) \n 2. 26: (Best result: 937)\n 3. 42: (Best result: 699) \n 4. 48: (Best result: 33523) \n")
-    #option2 = input("Please choose the algorithm to solve the TSP: \n 1. Genetic Algorithm. \n 2. Simulated Annealing Algorithm.\n 3. Ant colony optimization \n")
-
-    #pass_filename(int(option1), int(option2))
+    # pass_filename(int(option1), int(option2))
 
 
 if __name__ == "__main__":
