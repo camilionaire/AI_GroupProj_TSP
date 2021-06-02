@@ -80,7 +80,7 @@ def call_algorithm(option2, my_table):
         print(findTourLen(hillClimb, my_table))
     elif option2 == 3:
         print("calling ACO")
-        antColony(my_table)
+        get_values(my_table)
 
 
 
@@ -108,7 +108,7 @@ def main():
                                         ['1. Genetic Algorithm.',
                                          '2. Simulated Annealing Algorithm.',
                                          '3. Ant Colony Optimization'],
-                                        size=(30, 4),
+                                        size=(40, 3),
                                         key='algorithm')],
                                      [sg.Button('Ok'),
                                       sg.Button('Cancel')]]).read(
