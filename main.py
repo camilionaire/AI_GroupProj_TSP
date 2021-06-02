@@ -9,7 +9,6 @@ import random
 import sys
 import PySimpleGUI as sg
 from simAnTSP import *
-from aco import aco_main
 from ga import ga_main
 from antColony import *
 
@@ -81,31 +80,9 @@ def call_algorithm(option2, my_table):
         print(findTourLen(hillClimb, my_table))
     elif option2 == 3:
         print("calling ACO")
-        # hillClimb = run(my_table)
-        # print(findTourLen(hillClimb, my_table))
+        antColony(my_table)
 
 
-        event3, values3 = sg.Window('Please choose the ACO mode to solve the TSP: \n',
-                            [[sg.Text('Select one -> '), sg.Listbox(
-                                ['1. ACS',
-                                 '2. MaxMin',
-                                 '3. Elitist'],
-                                size=(30, 4),
-                                key='mode')],
-                             [sg.Button('Ok'),
-                              sg.Button('Cancel')]]).read(
-        close=True)
-        if event3 == 'Ok':
-            print(values3['mode'])
-            num3 = str(values3['mode'])
-            option3 = num3[2:3]
-            print(num3)
-            print(option3)
-            print('ok')
-            aco_main(int(option3), my_table)
-        else:
-            sg.popup_cancel('user cancelled')
-            exit()
 
 
 def main():

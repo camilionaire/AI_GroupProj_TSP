@@ -26,6 +26,8 @@ class pathNode:
         return f'pathNode({self.path},{self.distance},{self.pheromone})'
 
 def antColony(table):
+    print('testing')
+    exit()
     size = table.shape[0]
 
     #total number of ants
@@ -130,33 +132,4 @@ def antColony(table):
 
     #most recent path saved will be best found -> return
     return allPaths[all_index].path;
-
-
-
-
-def ACS(my_table):
-    print('ACS!')
-
-def MaxMin(my_table):
-    print('MaxMin!')
-
-def Elitist(my_table):
-    print('Elitist')
-
-
-
-
-def aco_main(option,my_table):
-    if option == 1:
-        print('You selected ACS')
-        ACS(my_table)
-    elif option == 2:
-        print('You selected MaxMin')
-        MaxMin(my_table)
-    elif option == 3:
-        print('You selected Elitist')
-        Elitist(my_table)
-    else:
-        print('invalid selection.')
-        exit()
 
