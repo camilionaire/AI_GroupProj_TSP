@@ -3,8 +3,9 @@ import random
 import math
 from tools import *
 
-# main functino
+# main function
 def simuAnneal(table):
+    xArray, yArray = [], [] #arrays for storing plot data.
     size = table.shape[0]
     arr1 = createRandoArr(size)
     iter = 200000
@@ -18,8 +19,18 @@ def simuAnneal(table):
             delta = findTourLen(arr1, table) - findTourLen(arr2, table)
             probability = math.exp( delta / temp)
             if decision(probability):
-                print(findTourLen(arr1, table), findTourLen(arr2, table), i, probability)
+                # print(findTourLen(arr1, table), findTourLen(arr2, table), i, probability)
                 arr1 = arr2.copy()
+        if i == 0 or (i+1) % 10000 == 0:
+            print("iteration:", i+1, "tour length:", findTourLen(arr1, table))
+        # NOTE this is the part that stores the table to be displayed.
+        if i == 0 or (i+1) % 2000 == 0:
+            xArray.append(i+1)
+            yArray.append(findTourLen(arr1, table))
+
+    # this is the part that prints the results.
+    plot_results(xArray, yArray)
+    
     return arr1
 
 # finds a neighbor by taking a random slice and reversing order
