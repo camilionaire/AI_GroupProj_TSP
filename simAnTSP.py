@@ -9,6 +9,9 @@ def simuAnneal(table):
     size = table.shape[0]
     arr1 = createRandoArr(size)
     iter = 200000
+
+    print("\nSimulated Annealing Starting:\n")
+
     for i in range(0, iter):
         # decreasing temperature
         temp = (iter - i) / 3000 #this works good on 42
@@ -17,9 +20,10 @@ def simuAnneal(table):
             arr1 = arr2.copy()
         else:
             delta = findTourLen(arr1, table) - findTourLen(arr2, table)
+            # the math part of function e^delt/T
             probability = math.exp( delta / temp)
+            # will make a non improving choice depending on prob.
             if decision(probability):
-                # print(findTourLen(arr1, table), findTourLen(arr2, table), i, probability)
                 arr1 = arr2.copy()
         if i == 0 or (i+1) % 10000 == 0:
             print("iteration:", i+1, "tour length:", findTourLen(arr1, table))
