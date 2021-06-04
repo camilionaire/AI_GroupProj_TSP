@@ -3,18 +3,28 @@ import random
 import math
 from tools import *
 
+################################################################################
+ITERATIONS = 200000
+TEMP_MOD = 3000
+################################################################################
+# TEMP_MOD:
+# 500 works good for the 48 city with big distances
+# 3000 works good for 42 and 26 puzzles
+# I suspect everything works good for 5 city puzzle
+
+
 # main function
 def simuAnneal(table):
     xArray, yArray = [], [] #arrays for storing plot data.
     size = table.shape[0]
     arr1 = createRandoArr(size)
-    iter = 200000
 
     print("\nSimulated Annealing Starting:\n")
 
-    for i in range(0, iter):
+    for i in range(0, ITERATIONS):
         # decreasing temperature
-        temp = (iter - i) / 3000 #this works good on 42
+
+        temp = (ITERATIONS - i) / TEMP_MOD #this works good on 42
         arr2 = findNeighborSA(arr1)
         if isBetter(arr2, arr1, table):
             arr1 = arr2.copy()
