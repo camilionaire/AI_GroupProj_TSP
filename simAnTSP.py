@@ -7,10 +7,10 @@ from tools import *
 ITERATIONS = 200000
 TEMP_MOD = 3000
 ################################################################################
-# TEMP_MOD:
-# 500 works good for the 48 city with big distances
-# 3000 works good for 42 and 26 puzzles
-# I suspect everything works good for 5 city puzzle
+# ITERATIONS / TEMP_MOD:
+# 200,000 / 400 works REAL good for the 48 city with big distances
+# 200,000 / 3000 works good for 42 and 26 puzzles
+# 100 / ANY#  I suspect everything works good for 5 city puzzle
 
 
 # main function
