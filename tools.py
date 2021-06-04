@@ -1,5 +1,12 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import random
+
+
+# These are functions specific for solving the TSP in it's array / table 
+# representation
+################################################################################
+
 # finds the current tour length.
 def findTourLen(arr, table):
     total = 0
@@ -22,7 +29,6 @@ def createRandoArr(size):
 
     return an_array
 
-
 # true if arr1 is better, false otherswise
 def isBetter(arr1, arr2, table):
     # it always will choose to move on the plateau
@@ -32,7 +38,17 @@ def isBetter(arr1, arr2, table):
         return False
 
 
+# just standard mathy things
+################################################################################
+
 # returns true if a rando # (0, 1] is less than some prob
 def decision(prob):
     return random.random() < prob
 
+
+################################################################################
+# plots the results of two arrays, plotted to x,y axis, automatically sizes
+# and connects in said color.
+def plot_results(xArray, yArray):
+        plt.plot(xArray, yArray, color="blue")
+        plt.show()

@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import random
 import time
 
+INIT_POP = 200
+GENERATIONS = 2000
 
 class Population:
     def __init__(self, pop, adjacency_mat):
@@ -97,8 +99,8 @@ def ga_main(my_table):
     for i in range(len(my_table)):
         cities.append(i)
 
-    pop = population.generate_population(cities, my_table, 100)
-    for i in range(1000):
+    pop = population.generate_population(cities, my_table, INIT_POP)
+    for i in range(GENERATIONS):
         print("Iteration: ", i) if i % 100 == 0 else None
         population.evaluate()
         population.crossover_mutate()

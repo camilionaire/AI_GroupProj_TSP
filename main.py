@@ -33,9 +33,11 @@ def call_algorithm(option2, my_table):
     if option2 == 1:
         ga_main(my_table)
     elif option2 == 2:
+        # get's the solution to the problem
         hillClimb = simuAnneal(my_table)
-        print(hillClimb)
-        print(findTourLen(hillClimb, my_table))
+        # prints out the solution to the problem
+        print("\nThe final path we found is:\n", hillClimb)
+        print("\nIt's path length is: ", findTourLen(hillClimb, my_table), "\n")
     elif option2 == 3:
         print("calling ACO")
 
