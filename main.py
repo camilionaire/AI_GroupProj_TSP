@@ -80,7 +80,7 @@ def call_algorithm(option2, my_table):
         print(findTourLen(hillClimb, my_table))
     elif option2 == 3:
         print("calling ACO")
-        get_values(my_table)
+        aco_main(my_table)
 
 
 

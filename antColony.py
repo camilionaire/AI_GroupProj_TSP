@@ -1,337 +1,101 @@
-from main import *
+import main
 import random
 import math
 import PySimpleGUI as sg
+import numpy
 
 
-# GOAL/ CHANGES:
-# instead of using createRandoArr to get new path,
-# make it so the ant chooses which city to travel to from
-# current city based on pheromone + distance
+# now ACO
+class Ant:
+   def __init__(self, num, path, p_start, pher, distance):
+       self.num = num
+       self.path = path
+       self.p_start = p_start
+       self.pher = pher
+       self.dist = distance
 
+colony_list = []
 
-# change pheromone increase from increasing pheromone for whole path
-# -> increasing pheromone after path between 2cities has been used by ant
+def aco_main(my_table):
+   print(my_table)
+   # now the variables
+   colony_size = 10  # 10,20,30,50,100,200
+   max_iter = 2  # 100 200
+   alpha = 1
+   beta = 1
+   rho = 0
+   initial_pher = 0.1
+   pher_dep_weight = 1
+   current_iter = 1
+   ant_dist = 0
+   best_score = 0  # this will keep track of the best score we find
+   time = 0  # this will keep track of the runtime
+   print(len(my_table))
+   t_range = len(my_table) - 1
+   for i in range(0, colony_size):  # time to create our ants and their start points
+       # rand_path = random.randint(0,t_range) #generate random ant starting point
+       rand_path = 0
+       Ant.num = i  # ant number
+       Ant.p_start = rand_path  # where the ant will start
+       Ant.pher = initial_pher  # pheromone amount ant will carry initially
+       Ant.dist = ant_dist  #
+       print(f'{Ant.num} {Ant.p_start} {Ant.pher} {Ant.dist}')
+       ants_list = []
+       ants_list.extend((Ant.num, Ant.p_start, Ant.pher, Ant.dist))
+       colony_list.extend([ants_list])
+       print(ants_list)
+       print(colony_list)
+   while (1):
+       for i in colony_list:
+           traversal_list = list(range(0, len(my_table)))
+           path_travelled = []
+           best_paths = []
+           ant_results = []
+           print('this is the first traversal list', traversal_list)
+           print('this is the ant data', i)  # this is our first list of an individual ant data
+           print('this is the ant number', i[0])  # this is the number of the ant
+           print('this is the start city', i[1])  # this is the start city the ant will be placed in
+           print('this is the ant pheromone', i[2])  # this is the amt of pheromone the ant has
+           print('this is the distance the ant has travelled',
+                 i[3])  # this is the distance the ant has travelled (initially zero)
+           path_travelled.append(i[1])  # add the start point to the traversed path
+           # traversal_list.remove(i[1])  # remove the option from the traversal list
+           # print('This is updated traversal list', traversal_list)
+           path_data = list(my_table[rand_path])  # select the correct row from the imported table
+           print('This is path data', path_data)
+           total = 0
+           # min = 100
+           for j in range(0, len(path_data)):  # should run five times for first table
+               min = 100
+               start_at = -1
+               copy_list = traversal_list[:]
+               for k in path_data[:]:
+                   print('k is', k)  # get each value from the row
+                   path_index = path_data.index(k, start_at + 1)  # get the index for each value
+                   print(path_index)
+                   if k == 0:
+                       print('skip')
+                   elif (k < min) and path_index not in path_travelled:  # so if we have 2 < 100 good but needs another constraint
+                       min = k
+                   elif (path_data.count(k) > 1):
+                       start_at += 1
+               print('min is ', min)
+               total += min
+               print('total is ', total)
+               # if path_data.index(min) in traversal_list:
+               # traversal_list.remove(path_data.index(min))
+               print('updated traversal list is ', traversal_list)
+               path_travelled.append(path_data.index(min, start_at + 1))
+               print('current nodes visited', path_travelled)
+               path_data[:] = list(my_table[path_data.index(min, start_at + 1)])
+               if (len(path_travelled) == len(traversal_list)):  # now the table is complete
+                   path_travelled.append(i[1])  # add the start point to the table
+                   amount = path_travelled[-1]
+                   total += path_data[amount]
+                   print(path_travelled)  # now the ant finished its journey
+                   print(total)  # return the total
+                   ant_results.append(total)
+                   total = 0 #reset total
+                   path_travelled[:] = [] #reset path travelled list
+                   continue
 
-
-# add evaporation of pheromone on path between cities ....
-
-# node keeping track of each path + info for that path
-class pathNode:
-    def __init__(self, path, distance, pheromone, count):
-        self.path = path  # path taken
-        self.distance = distance  # total distance for path
-        self.pheromone = pheromone  # pheromone for that path
-        self.count = count  # number of ants that have gone on that path
-
-    def __repr__(self):
-        return f'pathNode({self.path},{self.distance},{self.pheromone})'
-
-    def ant_eval(colony_size, iterations, alpha, beta, rho, init_pher, pher_weight, table):
-        print(f'{colony_size}, {iterations}, {alpha}, {beta}, {rho}, {init_pher}, {pher_weight}')
-
-
-
-'''Function get_values will ask the user to select the values for colonysize,
-maxiterations, alpha, beta, rho, initial pheromone and pheromone deposit weight'''
-def get_values(table):
-    punctuations = '''[',]'''
-    event, values = sg.Window('Please select the ant colony size: \n', [[sg.Text('Select one -> '), sg.Listbox(
-        ['1. 10', '2. 20', '3. 30', '4. 50', '5. 100', '6. 200'], size=(30, 6), key='colsize')],
-                                                                        [sg.Button('Ok'), sg.Button('Cancel')]]).read(
-        close=True)
-    if event == 'Ok':
-        print(values['colsize'])
-        num = str(values['colsize'])
-        option1 = num[4:]
-        only_numstring = '' #we want to just get the number back as a string without brackets, quotations, etc
-        print(num)
-        print(option1)
-        for char in option1:
-            if char not in punctuations:
-                only_numstring += char
-        print(only_numstring)
-        event2, values2 = sg.Window('Please choose the number of iterations: \n',
-                                    [[sg.Text('Select one -> '), sg.Listbox(
-                                        ['1. 50',
-                                         '2. 100',
-                                         '3. 200',
-                                         '4. 300',
-                                         '5. 500'],
-                                        size=(40, 5),
-                                        key='iteration')],
-                                     [sg.Button('Ok'),
-                                      sg.Button('Cancel')]]).read(
-            close=True)
-        if event2 == 'Ok':
-            print(values2['iteration'])
-            num2 = str(values2['iteration'])
-            option2 = num2[4:]
-            print(num2)
-            print(option2)
-            only_numstring2 = ''  # we want to just get the number back as a string without brackets, quotations, etc
-            for char in option2:
-                if char not in punctuations:
-                    only_numstring2 += char
-            print(only_numstring2)
-            event3, values3 = sg.Window('Please choose pheromone exponential weight (alpha): \n',
-                                        [[sg.Text('Select one -> '), sg.Listbox(
-                                            ['1. 1',
-                                             '2. 2',
-                                             '3. 3',
-                                             '4. 4',
-                                             '5. 5',
-                                             '6. 10',
-                                             '7. 15'],
-                                            size=(45, 7),
-                                            key='alpha')],
-                                         [sg.Button('Ok'),
-                                          sg.Button('Cancel')]]).read(
-                close=True)
-            if event3 == 'Ok':
-                print(values3['alpha'])
-                num3 = str(values3['alpha'])
-                option3 = num3[4:]
-                only_numstring3 = ''  # we want to just get the number back as a string without brackets, quotations, etc
-                for char in option3:
-                    if char not in punctuations:
-                        only_numstring3 += char
-                print(only_numstring3)
-                event4, values4 = sg.Window('Please choose pheromone heuristic weight(beta): \n',
-                                            [[sg.Text('Select one -> '), sg.Listbox(
-                                                ['1. 1',
-                                                 '2. 2',
-                                                 '3. 3',
-                                                 '4. 4',
-                                                 '5. 5',
-                                                 '6. 10',
-                                                 '7. 15'],
-                                                size=(45, 7),
-                                                key='beta')],
-                                             [sg.Button('Ok'),
-                                              sg.Button('Cancel')]]).read(
-                    close=True)
-                if event4 == 'Ok':
-                    print(values4['beta'])
-                    num4 = str(values4['beta'])
-                    option4 = num4[4:]
-                    print(num4)
-                    print(option4)
-                    only_numstring4 = ''  # we want to just get the number back as a string without brackets, quotations, etc
-                    for char in option4:
-                        if char not in punctuations:
-                            only_numstring4 += char
-                    print(only_numstring4)
-                    event5, values5 = sg.Window('Please choose the pheromone evaporation rate(rho): \n',
-                                                [[sg.Text('Select one -> '), sg.Listbox(
-                                                    ['1. 0',
-                                                     '2. 0.001',
-                                                     '3. 0.01',
-                                                     '4. 0.05',
-                                                     '5. 0.1',
-                                                     '6. 0.2',
-                                                     '7. 0.5'],
-                                                    size=(45, 7),
-                                                    key='rho')],
-                                                 [sg.Button('Ok'),
-                                                  sg.Button('Cancel')]]).read(
-                        close=True)
-                    if event5 == 'Ok':
-                        print(values5['rho'])
-                        num5 = str(values5['rho'])
-                        option5 = num5[4:]
-                        only_numstring5 = ''  # we want to just get the number back as a string without brackets, quotations, etc
-                        for char in option5:
-                            if char not in punctuations:
-                                only_numstring5 += char
-                        print(only_numstring5)
-                        event6, values6 = sg.Window('Please choose the initial pheromone: \n',
-                                                    [[sg.Text('Select one -> '), sg.Listbox(
-                                                        ['1. 0',
-                                                         '2. 1',
-                                                         '3. 2',
-                                                         '4. 5',
-                                                         '5. 10',
-                                                         '6. 20',
-                                                         '7. 50'],
-                                                        size=(40, 7),
-                                                        key='initpher')],
-                                                     [sg.Button('Ok'),
-                                                      sg.Button('Cancel')]]).read(
-                            close=True)
-                        if event6 == 'Ok':
-                            print(values6['initpher'])
-                            num6 = str(values6['initpher'])
-                            option6 = num6[4:]
-                            only_numstring6 = ''  # we want to just get the number back as a string without brackets, quotations, etc
-                            for char in option6:
-                                if char not in punctuations:
-                                    only_numstring6 += char
-                            print(only_numstring6)
-                            event7, values7 = sg.Window('Please choose the pheromone deposit weight: \n',
-                                                        [[sg.Text('Select one -> '), sg.Listbox(
-                                                            ['1. 1',
-                                                             '2. 2',
-                                                             '3. 5',
-                                                             '4. 10',
-                                                             '5. 20',
-                                                             '6. 50'],
-                                                            size=(40, 6),
-                                                            key='pherweight')],
-                                                         [sg.Button('Ok'),
-                                                          sg.Button('Cancel')]]).read(
-                                close=True)
-                            if event7 == 'Ok':
-                                print(values7['pherweight'])
-                                num7 = str(values7['pherweight'])
-                                option7 = num7[4:]
-                                only_numstring7 = ''  # we want to just get the number back as a string without brackets, quotations, etc
-                                for char in option7:
-                                    if char not in punctuations:
-                                        only_numstring7 += char
-                                print(only_numstring7)
-
-                            else:
-                                sg.popup_cancel('user cancelled')
-                                exit()
-                        else:
-                            sg.popup_cancel('user cancelled')
-                            exit()
-                    else:
-                        sg.popup_cancel('user cancelled')
-                        exit()
-                else:
-                    sg.popup_cancel('user cancelled')
-                    exit()
-            else:
-                sg.popup_cancel('user cancelled')
-                exit()
-        else:
-            sg.popup_cancel('user cancelled')
-            exit()
-    else:
-        sg.popup_cancel('user cancelled')
-        exit()
-    exit()
-
-
-# GOAL/ CHANGES:
-# instead of using createRandoArr to get new path,
-# make it so the ant chooses which city to travel to from
-# current city based on pheromone + distance
-
-
-# change pheromone increase from increasing pheromone for whole path
-# -> increasing pheromone after path between 2cities has been used by ant
-
-
-# add evaporation of pheromone on path between cities ....
-
-# node keeping track of each path + info for that path
-class pathNode:
-    def __init__(self, path, distance, pheromone, count):
-        self.path = path  # path taken
-        self.distance = distance  # total distance for path
-        self.pheromone = pheromone  # pheromone for that path
-        self.count = count  # number of ants that have gone on that path
-
-    def __repr__(self):
-        return f'pathNode({self.path},{self.distance},{self.pheromone})'
-
-
-def antColony(table):
-    size = table.shape[0]
-
-    colony_size = 20  # total number of ants
-    iterations = 200  # max num of iterations
-    tau = .5;  # pheromone initial val
-
-    # pheromone exponential weight
-    Alpha = 1;
-
-    # pheromone heristic weight
-    beta = 1;
-
-    # pheromone evaporation weight
-    rho = 0.05;
-
-    # first ant goes on random path
-    ant1 = createRandoArr(size)
-    path_temp = ant1;
-    totalAnts = 1  # total ants who've gone on path
-
-    # save in node
-    antLength = findTourLen(ant1, table)
-    bestPath = pathNode(ant1, antLength, tau, 1);
-
-    # array holding each better path taken (only if it is new best path)
-    allPaths = []
-    allPaths.append(bestPath)
-    all_index = 0;
-
-    # droping each ant
-    for i in range(colony_size):
-
-        # next ant chooses rand path
-        ant2 = createRandoArr(size);
-        totalAnts += 1;
-        flag = 0;  # =1 if path has already been saved in allPaths
-        matchingIndex = 0;  # index of which from allPaths that matched new path
-
-        # checking if new path matches any saved paths from allPaths
-        for i in range(all_index):
-            # if match is found
-            if (ant2 == allPaths[i].path):
-                flag = 1;  # note current node is a duplicate
-                matchingIndex = i;  # where it is saved in allPaths
-                # increase total num ants who've choosen this path
-                allPaths[i].count += 1;
-
-        # !!!!! instead of using isbetter - choose new path based on probability !!!!#
-
-        def newpath():
-            print('Hello')
-
-        # chech if new path is better than the last best path
-        if isBetter(ant2, path_temp, table):
-            path_temp = ant2;
-
-            # if this path is a duplicate
-            if flag == 1:
-                # get paths pheromone
-                tau_temp = allPaths[matchingIndex].pheromone;
-
-                # calculate pheromone based on this equation:
-                #   = (1-(evaporation))*current pheromone + num ants * (current Pheromone)^total ants on this path so far
-                pher = (1 - rho) * tau_temp + (colony_size * tau_temp ** allPaths[matchingIndex].count);
-
-                # update pheromone of path already in allPaths
-                allPaths[all_index].pheromone = pher;
-
-            # if path is new
-            else:
-                # save new best path as node
-                bestPath = pathNode(ant2, findTourLen(ant2, table), tau, 1)
-                #   save node in allPaths array
-                allPaths.append(bestPath)
-                all_index += 1;
-
-
-        # if current ants path is NOT better then the last best
-        else:
-            # get paths pheromone
-            tau_temp = allPaths[all_index].pheromone;
-
-            # calculate pheromone based on this equation:
-            #   = (1-(evaporation))*current pheromone + num ants * (current Pheromone)^total ants on this path so far
-            pher = (1 - rho) * tau_temp + (colony_size * tau_temp ** allPaths[all_index].count)
-
-            # update pheromone of on last best path
-            allPaths[all_index].pheromone = pher;
-
-    # displaying information for each path in allPaths
-    for i in range(all_index + 1):
-        print(allPaths[i].path, "distance : ", allPaths[i].distance, "pher: ", allPaths[i].pheromone)
-
-    # most recent path saved will be best found -> return
-    return allPaths[all_index].path;
