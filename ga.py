@@ -147,8 +147,8 @@ def ga_main(my_table):
     pop = population.generate_population(cities, my_table, INITIAL_POPULATION)
     for i in range(ITERATION):
         avg_score = population.evaluate()
-        print("Iteration: ", i, "avg fitness: ", population.avg_fitness) if i % 50 == 0 else None
-        population.avg_fitness_history.append(avg_score) if i % 50 == 0 else None
+        print("Iteration: ", i, "avg fitness: ", population.avg_fitness) if i % 100 == 0 else None
+        population.avg_fitness_history.append(avg_score) if i % 100 == 0 else None
         population.crossover_mutate()
     population.get_best()
     population.plot_results_score()
