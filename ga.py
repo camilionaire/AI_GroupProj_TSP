@@ -5,7 +5,8 @@ import time
 from collections import OrderedDict
 
 ITERATION = 1000
-INITIAL_POPULATION = 100
+INITIAL_POPULATION = 1000
+
 
 class Population:
     def __init__(self, pop, adjacency_mat):
@@ -43,14 +44,13 @@ class Population:
         distances = []
         for chromosome in self.pop:
             distances.append(self.fitness(chromosome))
-
         distances = np.asarray(distances)
         distances = np.reciprocal(distances)
         for i in distances:
-            self.scores.append(i/np.sum(distances))
+            self.scores.append(i / np.sum(distances))
 
     def select_parents(self):
-        candidate = random.choices(self.pop, self.scores)[0]
+        # candidate = random.choices(self.pop, self.scores)[0]
         # reduce parents has low score because duplicate cities
         # while len(candidate) - len(set(candidate)) > len(self.pop[0]) * 0.4:
         #     candidate = random.choices(self.pop, self.scores)[0]
@@ -64,18 +64,45 @@ class Population:
             mother = self.select_parents()
 
             cross_point = random.randrange(1, len(father) - 2)
-            temp = father[cross_point:].copy()
-            father[cross_point:] = mother[cross_point:]
-            mother[cross_point:] = temp
+            # simple crossover :/
+            # temp = father[cross_point:].copy()
+            # father[cross_point:] = mother[cross_point:]
+            # mother[cross_point:] = temp
 
-            # 3% mutation rate
+            temp_father = father.copy()
+            # remove part of father and add missing part from mother according to the order in mother chromosome
+            # print("---------------------------------Cross over------------------------------------------------")
+            # print("cross:", cross_point, "\nfather:", father, " \n", "mother: ", mother)
+            temp = []
+            father = father[:cross_point]
+            for j in mother:
+                if j not in father:
+                    temp.append(j)
+            father = np.append(father, temp)
+
+            temp = []
+            mother = mother[:cross_point]
+            for j in temp_father:
+                if j not in mother:
+                    temp.append(j)
+            mother = np.append(mother, temp)
+            # print("\ncross:", cross_point, "\nfather:", father, " \n", "mother: ", mother)
+            # print("-------------------------------------------------------------------------------------------")
+
+            # 3% mutation rate, will flip subarray in father/mother from startpoint to end point
+            mut_start = random.randint(1, len(father) - 2)
             if random.randint(0, 100) <= 3:
-                mutate_index = random.randint(0, len(father) - 1)
-                father[mutate_index] = mutate_index
+                # print("\nmut_start:", mut_start, "\nfather:", father, " \n", "mother: ", mother)
+                mutate_temp = father[mut_start:]
+                # print("\nmutate_temp:", mutate_temp)
+                father = father[:mut_start]
+                father = np.append(father, mutate_temp[::-1])
+                # print("\nEnd: \nfather:", father, " \n", "mother: ", mother)
 
             if random.randint(0, 100) <= 3:
-                mutate_index = random.randint(0, len(father) - 1)
-                mother[mutate_index] = mutate_index
+                mutate_temp1 = mother[mut_start:]
+                mother = mother[:mut_start]
+                mother = np.append(mother, mutate_temp1[::-1])
 
             children.append(father)
             children.append(mother)
