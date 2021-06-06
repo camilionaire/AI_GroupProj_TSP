@@ -3,8 +3,10 @@
 from tools import *
 import random
 
-POPULATION = 200
+POPULATION = 100
 GENERATIONS = 10000
+MUT_PRO = .05
+TITLE = './datasets/fortyeight33523.txt'
 
 def getLenArray(pop, table):
     tourLen = []
@@ -108,7 +110,8 @@ def mutate(child):
     return newChild
 
 def main():
-    table = np.loadtxt('./datasets/twentysix937.txt')
+    table = np.loadtxt(TITLE)
+    print(TITLE)
     size = table.shape[0]
     bestEver = 99999999
     bestie = []
@@ -124,7 +127,7 @@ def main():
             tot, better = socialStatus(tourArray)
             par1, par2 = chooseParents(oldGen, tot, better)
             child = crossOver(par1, par2)
-            if decision(.03):
+            if decision(MUT_PRO):
                 child = mutate(child)
             newGen.append(child)
 
@@ -136,10 +139,10 @@ def main():
             bestEver = bestGen
             bestie = oldGen[tourArray.index(bestGen)]
         
-        if i % 100 == 0:
+        if i == 0 or (i+1) % 250 == 0:
             # bestLen = min(tourArray)
             # bestPath = oldGen[tourArray.index(bestLen)]
-            print("Generation:", i, "Gen Avg: ", avgFitness(newGen, table))
+            print("Generation:", i+1, "Gen Avg: ", avgFitness(newGen, table))
             # print("best score:", bestLen, "for:")
             # print(bestPath)
 
