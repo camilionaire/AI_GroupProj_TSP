@@ -2,11 +2,19 @@
 # new genetic algorithm to solve the travelling salesperson problem
 from tools import *
 import random
+import time
 
-POPULATION = 100
-GENERATIONS = 10000
-MUT_PRO = .05
+################################################################################
+POPULATION = 30
+GENERATIONS = 15000
+MUT_PRO = .045
 TITLE = './datasets/fortyeight33523.txt'
+################################################################################
+# POP / GEN / MUT
+# 30 / 15000 / .045 best so far for 48cities sol 34300
+#
+#
+#
 
 def getLenArray(pop, table):
     tourLen = []
@@ -84,21 +92,22 @@ def avgFitness(pop, table):
 def mutate(child):
     # I think this may be a bug in my logic but will hopefully still work.
     length = len(child)# - 1
-    cut1 = random.randint(0, length) # 0 to 25
+    cut1 = random.randint(0, length) # 0 to 25 (example)
     cut2 = random.randint(0, length) # 0 to 25
     if cut2 < cut1:
         cut1, cut2 = cut2, cut1
         
-    if cut1 == cut2: # escapes this time...
+    # checks for edge cases
+    if cut1 == cut2: 
         newChild = child
     elif cut1 == 0 and cut2 == length:
         newChild = child[::-1]
-    else: # might not work for edge cases...
+    else: # checks for edg cases
         if cut1 == 0:
             newChild = child[cut2-1::-1] + child[cut2:]
-        elif cut2 == length: # length is 25
-            newChild = child[:cut1] + child[:cut1 - 1:-1] #hopefully is end to cut 1
-        else:
+        elif cut2 == length:
+            newChild = child[:cut1] + child[:cut1 - 1:-1] 
+        else: # middle 'normal' switch cases
             newChild = child[:cut1] + child[cut2 - 1:cut1 - 1:-1] + child[cut2:]
 
     if len(newChild) != length:
@@ -110,11 +119,14 @@ def mutate(child):
     return newChild
 
 def main():
+    start = time.time()
     table = np.loadtxt(TITLE)
     print(TITLE)
     size = table.shape[0]
-    bestEver = 99999999
-    bestie = []
+    bestEver = 99999999 # best tour so far
+    bestie = [] # path of best tour
+    greatestGen = 0 # gen best is found
+    xArray, yArray = [], []
 
     oldGen = createPopulation(size)
     tourArray = getLenArray(oldGen, table)
@@ -138,17 +150,21 @@ def main():
         if bestGen < bestEver:
             bestEver = bestGen
             bestie = oldGen[tourArray.index(bestGen)]
+            greatestGen = i+1
         
-        if i == 0 or (i+1) % 250 == 0:
-            # bestLen = min(tourArray)
-            # bestPath = oldGen[tourArray.index(bestLen)]
-            print("Generation:", i+1, "Gen Avg: ", avgFitness(newGen, table))
-            # print("best score:", bestLen, "for:")
-            # print(bestPath)
+        if i == 0 or (i+1) % 500 == 0:
+            avg = avgFitness(newGen, table)
+            print("Generation:", i+1, "Gen Avg: {:.2f}".format(avg))
+            xArray.append(i+1)
+            yArray.append(avg)
 
-    print("Finished Result: ", avgFitness(oldGen, table))
+    print("\n\nFinal Gen Avg: {:.2f}".format(avgFitness(oldGen, table)))
     print("Best Tour:", bestEver)
     print("Path: ", bestie)
+
+    elapsed = time.time() - start
+    print("\nGA ran in {:.3f} seconds".format(elapsed))
+    plot_results(xArray, yArray)
 
 if __name__ == "__main__":
     main()
