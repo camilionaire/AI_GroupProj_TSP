@@ -4,8 +4,8 @@ import random
 import time
 from collections import OrderedDict
 
-ITERATION = 1000
-INITIAL_POPULATION = 50
+ITERATION = 10000
+INITIAL_POPULATION = 30
 
 
 class Population:
@@ -32,14 +32,10 @@ class Population:
         for i in range(len(chromosome) - 1):
             sum_fit += self.adjacency_mat[chromosome[i]][chromosome[i + 1]]
         sum_fit += self.adjacency_mat[chromosome[len(chromosome) - 1]][chromosome[0]]
-        if self.best >= sum_fit and len(chromosome) == len(set(chromosome)):
+        if self.best >= sum_fit:
             self.best = sum_fit
             self.result_history.append(tuple((chromosome, self.best)))
             self.result = chromosome.copy()
-            # print("\n-------------------------------------")
-            # print("Best score so far: ", self.best)
-            # print("Best result so far: ", self.result)
-            # print("-------------------------------------\n")
         return sum_fit
 
     def evaluate(self):
@@ -48,18 +44,20 @@ class Population:
         for chromosome in self.pop:
             distances.append(self.fitness(chromosome))
         distances = np.asarray(distances)
+        temp = distances
+        self.avg_fitness = sum(distances) / len(distances)
         distances = np.reciprocal(distances)
         for i in distances:
-            self.scores.append(i / np.sum(distances))
-        self.avg_fitness = sum(self.scores) / len(self.scores)
+            self.scores.append(i / np.sum(distances) * 100)
+        # print('----------------------------------------------------------')
+        # print(self.pop)
+        # print(temp)
+        # print(self.scores)
+        # print('----------------------------------------------------------')
         # self.avg_fitness_history.append(self.avg_fitness)
         return self.avg_fitness
 
     def select_parents(self):
-        # candidate = random.choices(self.pop, self.scores)[0]
-        # reduce parents has low score because duplicate cities
-        # while len(candidate) - len(set(candidate)) > len(self.pop[0]) * 0.4:
-        #     candidate = random.choices(self.pop, self.scores)[0]
         candidate = random.choices(self.pop, self.scores)[0]
         return candidate
 
