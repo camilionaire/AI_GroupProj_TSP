@@ -52,7 +52,8 @@ class Population:
         for i in distances:
             self.scores.append(i / np.sum(distances))
         self.avg_fitness = sum(self.scores) / len(self.scores)
-        self.avg_fitness_history.append(self.avg_fitness)
+        # self.avg_fitness_history.append(self.avg_fitness)
+        return self.avg_fitness
 
     def select_parents(self):
         # candidate = random.choices(self.pop, self.scores)[0]
@@ -131,7 +132,8 @@ class Population:
 
     def plot_results_score(self):
         # self.score_history = list(set(self.score_history))
-        print(self.score_history)
+        print(self.avg_fitness_history)
+        plt.autoscale(enable=True, axis='y', tight=True)
         plt.plot(range(len(self.avg_fitness_history)), self.avg_fitness_history, color="skyblue")
         plt.show()
 
@@ -146,8 +148,9 @@ def ga_main(my_table):
 
     pop = population.generate_population(cities, my_table, INITIAL_POPULATION)
     for i in range(ITERATION):
+        avg_score = population.evaluate()
         print("Iteration: ", i, "avg fitness: ", population.avg_fitness) if i % 50 == 0 else None
-        population.evaluate()
+        population.avg_fitness_history.append(avg_score) if i % 50 == 0 else None
         population.crossover_mutate()
     population.get_best()
     population.plot_results_score()
