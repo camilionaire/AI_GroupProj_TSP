@@ -19,7 +19,7 @@ colony_list = []
 
 
 def ant_data(path_data, total, my_table, traversal_list, path_travelled, i, ant_results, destination):
-    for j in range(0, len(path_data)):  # should run five times for first table
+    for j in range(0, (len(path_data)-1)):  # should run five times for first table
         min = 100
         start_at = -1
         copy_list = traversal_list[:]
@@ -73,9 +73,11 @@ def ant_data(path_data, total, my_table, traversal_list, path_travelled, i, ant_
             print(path_travelled)  # now the ant finished its journey
             print(total)  # return the total
             ant_results.append(total)
+            i[3] += total
+            print('The ant went a distance of ', i[3]) #distance for ant should now be updated
             total = 0  # reset total
             path_travelled[:] = []  # reset path travelled list
-            print(ant_results)
+
 
 def aco_main(my_table):
     print(my_table)
@@ -130,3 +132,4 @@ def aco_main(my_table):
             #call function ant_data
             ant_data(path_data, total, my_table, traversal_list, path_travelled, i, ant_results, destination)
         current_iter += 1 #go to next iteration
+    print(colony_list) #print the ant data with updated distances
