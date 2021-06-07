@@ -127,5 +127,6 @@ def aco_main(my_table):
             print('This is path data', path_data)
             total = 0
             # min = 100
+            #call function ant_data
             ant_data(path_data, total, my_table, traversal_list, path_travelled, i, ant_results, destination)
-        current_iter += 1
+        current_iter += 1 #go to next iteration
