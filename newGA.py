@@ -1,5 +1,6 @@
 ################################################################################
 # new genetic algorithm to solve the travelling salesperson problem
+# EXTRA FILES AND FUNCTIONS FOUND IN GATOOLS.PY AND TOOLS.PY!!!
 from tools import *
 from GAtools import *
 import random
