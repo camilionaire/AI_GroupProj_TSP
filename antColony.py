@@ -8,16 +8,16 @@ import numpy
 # now ACO
 class Ant:
     def __init__(self, num, path, p_start, pher, distance):
-        self.num = num
-        self.path = path
-        self.p_start = p_start
-        self.pher = pher
-        self.dist = distance
+        self.num = num #number of the ant
+        self.path = path #the path the ant has taken
+        self.p_start = p_start #the start city the ant will start in
+        self.pher = pher #the pheromone amt
+        self.dist = distance #the distance the ant has travelled
 
 
-colony_list = []
+colony_list = [] #this list holds the lists of each ant in the colony
 
-
+'''The ant_data function follows each ant as it traverses the cities'''
 def ant_data(path_data, total, my_table, traversal_list, path_travelled, i, ant_results, destination):
     for j in range(0, (len(path_data)-1)):  # should run five times for first table
         min = 100
@@ -78,7 +78,8 @@ def ant_data(path_data, total, my_table, traversal_list, path_travelled, i, ant_
             total = 0  # reset total
             path_travelled[:] = []  # reset path travelled list
 
-
+'''The aco main function takes the data from my_table and creates the ants that will be sent 
+to the ant_data function'''
 def aco_main(my_table):
     print(my_table)
     # now the variables
@@ -96,8 +97,8 @@ def aco_main(my_table):
     print(len(my_table))
     t_range = len(my_table) - 1
     for i in range(0, colony_size):  # time to create our ants and their start points
-        rand_path = random.randint(0,t_range) #generate random ant starting point
-        #rand_path = 4
+        #rand_path = random.randint(0,t_range) #generate random ant starting point
+        rand_path = 1
         Ant.num = i  # ant number
         Ant.p_start = rand_path  # where the ant will start
         Ant.pher = initial_pher  # pheromone amount ant will carry initially
