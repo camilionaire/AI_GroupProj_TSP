@@ -5,7 +5,7 @@ import time
 from collections import OrderedDict
 
 ITERATION = 10000
-INITIAL_POPULATION = 30
+INITIAL_POPULATION = 100
 
 
 class Population:
@@ -151,6 +151,6 @@ def ga_main(my_table):
         population.avg_fitness_history.append(avg_score) if i % 100 == 0 else None
         population.crossover_mutate()
     population.get_best()
-    population.plot_results_score()
     elapsed = time.time() - start
     print("\n\nScript execution time: {} seconds".format(elapsed))
+    population.plot_results_score()

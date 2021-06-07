@@ -5,7 +5,7 @@ from tools import *
 
 ################################################################################
 ITERATIONS = 200000
-TEMP_MOD = 3000
+TEMP_MOD = 400
 ################################################################################
 # ITERATIONS / TEMP_MOD:
 # 200,000 / 400 works REAL good for the 48 city with big distances
