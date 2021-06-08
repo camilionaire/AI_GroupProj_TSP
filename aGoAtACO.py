@@ -11,13 +11,14 @@ import random
 # TAO is set at beginning based on size of table, init to all 0's (no ants!)
 # both ETA and TAO are tables that will be the size of the table examined.
 ANTS = 10
-ITERS = 1000
+ITERS = 10000
 INIT_PHER = 1 # init put on tao
-Q = 1 # pher put down along path like Q?...
+# IMPORTANT Q=100 FOR 25 MAP, Q=1 FOR 4 MAP
+Q = 100 # pher put down along path like Q?...
 ETA_VAR = 1 #eta found by this divided by length?
 RHO = .1
-ALPHA, BETA = 1, 1
-TITLE = './datasets/five19.txt'
+ALPHA, BETA = 2, 2
+TITLE = './datasets/twentysix937.txt'
 
 # chooses a random city for ant to start in
 def createAnt(size):
@@ -134,20 +135,21 @@ def main():
         for j in range(0, ANTS):
             ant = createAnt(size)
             colony.append(ant)
-        if i % 100 == 0:
-            print("COLONY B4 TRAVEL:", colony)
+        # if i % 200 == 0:
+        #     print("COLONY B4 TRAVEL:", colony)
         for ant in colony:
             ant = goTravel(ant, tao, eta, size)
-        if i % 100 == 0:
-            print("COLONY AFTER TRAVEL:")
-            for ant in colony:
-                print(ant, "fitness:", findTourLen(ant, table))
+        if i % 200 == 0:
+        #     print("COLONY AFTER TRAVEL:")
+        #     for ant in colony:
+        #         print(ant, "fitness:", findTourLen(ant, table))
+            print("AVG FIT:", avgFitness(colony, table))
         for ant in colony:
             tao = updatePheromones(ant, tao, table)
         tao = evapPheromones(tao)
-        if i % 100 == 0:
-            print("NEW TAO, HOPEFULLY:")
-            print(tao)
+        # if i % 200 == 0:
+        #     print("NEW TAO, HOPEFULLY:")
+        #     print(tao)
         
 
         # BUG this doesn't seem to work, reworking
