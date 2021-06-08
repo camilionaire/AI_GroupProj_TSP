@@ -1,6 +1,7 @@
 ################################################################################
 # This will be an attempt at a functional ant colony optimization function
 
+from GAtools import avgFitness
 from tools import *
 import numpy as np
 import random
@@ -9,13 +10,13 @@ import random
 # ETA is computed at beginning of function from table & distances between cities
 # TAO is set at beginning based on size of table, init to all 0's (no ants!)
 # both ETA and TAO are tables that will be the size of the table examined.
-ANTS = 10
-ITERS = 100
-INIT_PHER = 1 # init put on tao
-PHEROMONES = 2 # pher put down along path like Q?...
+ANTS = 40
+ITERS = 10000
+INIT_PHER = 1000 # init put on tao
+PHEROMONES = 1000 # pher put down along path like Q?...
 RHO = .1
 ALPHA, BETA = 1, 1
-TITLE = './datasets/five19.txt'
+TITLE = './datasets/twentysix937.txt'
 
 # chooses a random city for ant to start in
 def createAnt(size):
@@ -69,6 +70,33 @@ def makeTravelChoices(ant, prob, size):
         # for testing that things were getting selected correctly
         # print("Choices:", possibilities, "Probs:", poss_prob)
         ant.append(choice)
+
+# NOTE this function is currently not taking into account the fact that
+# all the tours are two possible ways.  so 1->2 pheromone != 2->1.
+def evapAndDist(colony, fit, table, tao, size):
+
+    deltaTao = np.zeros((size, size))
+    for ant in range(0, ANTS):
+        for i in range(0, size - 1):
+            deltaTao[colony[ant][i]][colony[ant][i+1]] += \
+                PHEROMONES / fit[ant] # * table[colony[ant][i]][colony[ant][i+1]] / fit[ant]
+        # added in for symmetric graphs
+            deltaTao[colony[ant][i+1]][colony[ant][i]] += \
+                PHEROMONES / fit[ant]
+        # add in back to front here...
+        deltaTao[colony[ant][size - 1]][colony[ant][0]] += \
+            PHEROMONES / fit[ant] # * table[colony[ant][size - 1]][colony[ant][0]] / fit[ant]
+    # added in for symmetric graphs
+        deltaTao[colony[ant][0]][colony[ant][size - 1]] += \
+            PHEROMONES / fit[ant]    
+    # evaporate and add in new stuff.
+    for row in range(0, size):
+        for col in range(0, size):
+            tao[row][col] = tao[row][col] * (1 - RHO) + \
+                deltaTao[row][col]
+
+    return tao
+
         
 def main():
     table = np.loadtxt(TITLE)
@@ -82,27 +110,28 @@ def main():
     print("TOP PROB:\n", top_prob)
     
     # for the number of... eventually iterations
-    for i in range(0, 2):
+    for i in range(0, ITERS):
         colony = []
         fitness = []
 
     # all of the ants travel here
-        for i in range(0, ANTS):
+        for j in range(0, ANTS):
             ant = createAnt(size)
             colony.append(ant)
-        print("Colony: ", colony)
+        # print("Colony: ", colony)
         for ant in colony:
             makeTravelChoices(ant, top_prob, size)
             fitness.append(findTourLen(ant, table))
             
-        # we need to distribute and evaporate here
-        # deltaTao = np.zeros((size, size))
-        # for ant in colony:
+        evapAndDist(colony, fitness, table, tao, size)
 
-
-        print("Colony after travel: ")
-        for ant in range(0, ANTS):
-            print(colony[ant], "tourLength:", fitness[ant])
+        # print("Colony after travel: ")
+        # for ant in range(0, ANTS):
+        #     print(colony[ant], "tourLength:", fitness[ant])
+        # this uses from GA function so hopefully works...
+        if i == 0 or (i+1) % 200 == 0:
+            print("Gen:", i+1, "Average Fitness: ", avgFitness(colony, table))
+            print(tao)
 
 if __name__ == "__main__":
     main()
