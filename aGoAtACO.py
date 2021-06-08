@@ -10,10 +10,11 @@ import random
 # ETA is computed at beginning of function from table & distances between cities
 # TAO is set at beginning based on size of table, init to all 0's (no ants!)
 # both ETA and TAO are tables that will be the size of the table examined.
-ANTS = 40
-ITERS = 10000
-INIT_PHER = 1000 # init put on tao
-PHEROMONES = 1000 # pher put down along path like Q?...
+ANTS = 20
+ITERS = 2000
+INIT_PHER = 1 # init put on tao
+PHEROMONES = 902 # pher put down along path like Q?...
+ETA_VAR = 1
 RHO = .1
 ALPHA, BETA = 1, 1
 TITLE = './datasets/twentysix937.txt'
@@ -26,7 +27,7 @@ def createAnt(size):
 
 # Eta is set to reciprocal of table w/0's on diag
 def createETA(table, size):
-    eta = np.reciprocal(table)
+    eta = np.reciprocal(table) * ETA_VAR
     for diag in range(0, size):
         eta[diag][diag] = 0
     return eta
@@ -79,16 +80,18 @@ def evapAndDist(colony, fit, table, tao, size):
     for ant in range(0, ANTS):
         for i in range(0, size - 1):
             deltaTao[colony[ant][i]][colony[ant][i+1]] += \
-                PHEROMONES / fit[ant] # * table[colony[ant][i]][colony[ant][i+1]] / fit[ant]
+                (PHEROMONES / fit[ant]) * table[colony[ant][i]][colony[ant][i+1]]
         # added in for symmetric graphs
             deltaTao[colony[ant][i+1]][colony[ant][i]] += \
-                PHEROMONES / fit[ant]
+                PHEROMONES / fit[ant] * table[colony[ant][i+1]][colony[ant][i]]
+
         # add in back to front here...
         deltaTao[colony[ant][size - 1]][colony[ant][0]] += \
-            PHEROMONES / fit[ant] # * table[colony[ant][size - 1]][colony[ant][0]] / fit[ant]
+            PHEROMONES / fit[ant] * table[colony[ant][size - 1]][colony[ant][0]] 
     # added in for symmetric graphs
         deltaTao[colony[ant][0]][colony[ant][size - 1]] += \
-            PHEROMONES / fit[ant]    
+            PHEROMONES / fit[ant] * table[colony[ant][0]][colony[ant][size - 1]] 
+   
     # evaporate and add in new stuff.
     for row in range(0, size):
         for col in range(0, size):
@@ -114,6 +117,7 @@ def main():
         colony = []
         fitness = []
 
+        top_prob = bigBad(tao, eta, size)
     # all of the ants travel here
         for j in range(0, ANTS):
             ant = createAnt(size)
@@ -123,15 +127,12 @@ def main():
             makeTravelChoices(ant, top_prob, size)
             fitness.append(findTourLen(ant, table))
             
-        evapAndDist(colony, fitness, table, tao, size)
+        tao = evapAndDist(colony, fitness, table, tao, size)
 
-        # print("Colony after travel: ")
-        # for ant in range(0, ANTS):
-        #     print(colony[ant], "tourLength:", fitness[ant])
-        # this uses from GA function so hopefully works...
-        if i == 0 or (i+1) % 200 == 0:
+        if i == 0 or (i+1) % 50 == 0:
             print("Gen:", i+1, "Average Fitness: ", avgFitness(colony, table))
-            print(tao)
+            # print("TAO:\n", tao)
+            # print(tao)
 
 if __name__ == "__main__":
     main()
