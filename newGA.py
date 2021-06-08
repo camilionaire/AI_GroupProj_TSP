@@ -8,7 +8,7 @@ import time
 
 ################################################################################
 POPULATION = 30
-GENERATIONS = 20000
+GENERATIONS = 15000
 MUT_PRO = .044
 EXTRA_CHANCE = 0 # for providing a little extra chance for low pop scores
 TITLE = './datasets/fortyeight33523.txt' # testing if run from main()
