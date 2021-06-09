@@ -10,15 +10,15 @@ import random
 # ETA is computed at beginning of function from table & distances between cities
 # TAO is set at beginning based on size of table, init to all 1's (no ants!)
 # both ETA and TAO are tables that will be the size of the table examined.
-ANTS = 10
-ITERS = 500
-INIT_PHER = 1 # init put on tao
-# IMPORTANT Q=100 FOR 25 MAP, Q=1 FOR 4 MAP
-# I also don't know if ^^^ this works, need more testing.
-Q = 10 # pher put down along path like Q?...
-ETA_VAR = 1 #eta found by this divided by length?
+# for 26 puzzle: ANTS=20, ITERS=1000, INIT_PHER/ETA_VAR=100
+# Q = 937, ALPHA=2, BETA=2 works sometimes, falls into local minima
+ANTS = 20
+ITERS = 2000
+INIT_PHER = 100 # init put on tao
+Q = 937 # pher put down along path like Q?...
+ETA_VAR = 100 #eta found by this divided by length?
 RHO = .1
-ALPHA, BETA = 1, 2
+ALPHA, BETA = 2, 2
 TITLE = './datasets/twentysix937.txt'
 
 # chooses a random city for ant to start in
@@ -70,7 +70,9 @@ def updatePheromones(ant, tao, table):
     # this is one directional... doesn't update other way.
     for city in range(0, size - 1):
         tao[ant[city]][ant[city + 1]] += delta
+        tao[ant[city + 1]][ant[city]] += delta # for symmetric graphs
     tao[ant[city + 1]][ant[0]] += delta
+    tao[ant[0]][ant[city + 1]] += delta
     return tao
 
 def evapPheromones(tao):
@@ -81,11 +83,9 @@ def main():
     size = table.shape[0] #finds size of map
     eta = createETA(table, size)
     tao = createTAO(size)
-    # top_prob = bigBad(tao, eta, size)
 
-    print("ETA:\n", eta)
-    print("TAO:\n", tao)
-    # print("TOP PROB:\n", top_prob)
+    # print("ETA:\n", eta)
+    # print("TAO:\n", tao)
     
     # for the number of... eventually iterations
     for i in range(0, ITERS):
@@ -97,18 +97,24 @@ def main():
         #     print("COLONY B4 TRAVEL:", colony)
         for ant in colony:
             ant = goTravel(ant, tao, eta, size)
-        if i == 0 or (i+1) % 20 == 0:
+        if i == 0 or (i+1) % 100 == 0:
         #     print("COLONY AFTER TRAVEL:")
         #     for ant in colony:
         #         print(ant, "fitness:", findTourLen(ant, table))
             print("GEN:", str(i+1).zfill(4), "AVG FIT: {:.2f}".format(avgFitness(colony, table)))
+        # if (i+1) % 500 == 0:
+        #     print("NEW TAO, HOPEFULLY:")
+        #     print(tao)
         for ant in colony:
             tao = updatePheromones(ant, tao, table)
         tao = evapPheromones(tao)
-        # if i % 200 == 0:
-        #     print("NEW TAO, HOPEFULLY:")
-        #     print(tao)
         
+    print("FINAL TAO: \n", tao)
+    print("FINAL COLONY AFTER TRAVEL:")
+    for ant in colony:
+        print(ant, "fitness:", findTourLen(ant, table))
+    print("FINAL GEN:", str(i+1).zfill(4), "AVG FIT: {:.2f}".format(avgFitness(colony, table)))
+
 
 
 if __name__ == "__main__":
