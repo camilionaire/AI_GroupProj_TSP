@@ -14,16 +14,16 @@ import warnings #this module is being used to get rid of the runtime warning
 
 # for 26 puzzle: ANTS=20, ITERS=1000, INIT_PHER/ETA_VAR=100
 # Q = 937, ALPHA=2, BETA=2 works sometimes, falls into local minima
-ANTS = 20
-ITERS = 2000
-INIT_PHER = 100 # init put on tao
-Q = 937 # pher put down along path like Q?...
-ETA_VAR = 100 #eta found by this divided by length?
+ANTS = 30
+ITERS = 1000
+INIT_PHER = 1 # init put on tao
+Q = 1 # pher put down along path like Q?... maybe have it optimal sol?
+ETA_VAR = 1 #eta found by this divided by length?
 RHO = .1
-ALPHA, BETA = 2, 2
+ALPHA, BETA = 1, 1
 # TITLE = './datasets/five19.txt'
-TITLE = './datasets/twentysix937.txt'
-# TITLE = './datasets/fortytwo699.txt'
+# TITLE = './datasets/twentysix937.txt'
+TITLE = './datasets/fortytwo699.txt'
 # TITLE = './datasets/fortyeight33523.txt'
 
 # chooses a random city for ant to start in
@@ -108,7 +108,7 @@ def main():
         #     print("COLONY B4 TRAVEL:", colony)
         for ant in colony:
             ant = goTravel(ant, tao, eta, size)
-        if i == 0 or (i+1) % 100 == 0:
+        if i == 0 or (i+1) % 50 == 0:
         #     print("COLONY AFTER TRAVEL:")
         #     for ant in colony:
         #         print(ant, "fitness:", findTourLen(ant, table))
@@ -120,7 +120,11 @@ def main():
             tao = updatePheromones(ant, tao, table)
         tao = evapPheromones(tao)
         
-    print("FINAL TAO: \n", tao)
+# NOTE TESTING INFORMATION, CAN BE COMMENTED / ADJUSTED
+    # print("FINAL TAO: \n", tao)
+    file = open("finalTao.txt", "w")
+    for row in tao:
+        file.write(str(row) + "\n")
     print("FINAL COLONY AFTER TRAVEL:")
     for ant in colony:
         print(ant, "fitness:", findTourLen(ant, table))

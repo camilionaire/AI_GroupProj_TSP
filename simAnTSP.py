@@ -2,6 +2,7 @@
 import random
 import math
 from tools import *
+import time
 
 ################################################################################
 ITERATIONS = 200000
@@ -15,6 +16,10 @@ TEMP_MOD = 400
 
 # main function
 def simuAnneal(table):
+    start = time.time()
+    bestEver = 99999999 # best tour so far
+    bestie = [] # path of best tour
+    greatestGen = 0 # gen best is found
     xArray, yArray = [], [] #arrays for storing plot data.
     size = table.shape[0]
     arr1 = createRandoArr(size)
@@ -28,6 +33,11 @@ def simuAnneal(table):
         arr2 = findNeighborSA(arr1)
         if isBetter(arr2, arr1, table):
             arr1 = arr2.copy()
+            curr = findTourLen(arr1, table)
+            if  curr < bestEver:
+                bestEver = curr
+                bestie = arr1
+                greatestGen = i+1
         else:
             delta = findTourLen(arr1, table) - findTourLen(arr2, table)
             # the math part of function e^delt/T
@@ -36,12 +46,18 @@ def simuAnneal(table):
             if decision(probability):
                 arr1 = arr2.copy()
         if i == 0 or (i+1) % 10000 == 0:
-            print("iteration:", i+1, "tour length:", findTourLen(arr1, table))
+            print("ITERATION:", str(i+1).zfill(5), "TOUR LENGTH:", findTourLen(arr1, table))
         # NOTE this is the part that stores the table to be displayed.
-        if i == 0 or (i+1) % 2000 == 0:
+        if (i+1) % 1000 == 0: #or i == 0: # took out for better graph
             xArray.append(i+1)
             yArray.append(findTourLen(arr1, table))
 
+    
+    print("\nBEST TOUR:", bestEver, " FOUND IN ITERATION:", greatestGen)
+    print("PATH: ", bestie)
+
+    elapsed = time.time() - start
+    print("\nSA ran in {:.3f} seconds".format(elapsed))
     # this is the part that prints the results.
     plot_results(xArray, yArray)
     
