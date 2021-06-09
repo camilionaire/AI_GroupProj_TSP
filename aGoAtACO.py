@@ -11,6 +11,7 @@ import warnings #this module is being used to get rid of the runtime warning
 # ETA is computed at beginning of function from table & distances between cities
 # TAO is set at beginning based on size of table, init to all 1's (no ants!)
 # both ETA and TAO are tables that will be the size of the table examined.
+
 # for 26 puzzle: ANTS=20, ITERS=1000, INIT_PHER/ETA_VAR=100
 # Q = 937, ALPHA=2, BETA=2 works sometimes, falls into local minima
 ANTS = 20
@@ -20,7 +21,10 @@ Q = 937 # pher put down along path like Q?...
 ETA_VAR = 100 #eta found by this divided by length?
 RHO = .1
 ALPHA, BETA = 2, 2
-TITLE = './datasets/five19.txt'
+# TITLE = './datasets/five19.txt'
+TITLE = './datasets/twentysix937.txt'
+# TITLE = './datasets/fortytwo699.txt'
+# TITLE = './datasets/fortyeight33523.txt'
 
 # chooses a random city for ant to start in
 def createAnt(size):
