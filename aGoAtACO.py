@@ -8,16 +8,16 @@ import random
 
 ################################################################################
 # ETA is computed at beginning of function from table & distances between cities
-# TAO is set at beginning based on size of table, init to all 0's (no ants!)
+# TAO is set at beginning based on size of table, init to all 1's (no ants!)
 # both ETA and TAO are tables that will be the size of the table examined.
 ANTS = 10
-ITERS = 10000
+ITERS = 500
 INIT_PHER = 1 # init put on tao
 # IMPORTANT Q=100 FOR 25 MAP, Q=1 FOR 4 MAP
-Q = 100 # pher put down along path like Q?...
+Q = 10 # pher put down along path like Q?...
 ETA_VAR = 1 #eta found by this divided by length?
 RHO = .1
-ALPHA, BETA = 2, 2
+ALPHA, BETA = 1, 2
 TITLE = './datasets/twentysix937.txt'
 
 # chooses a random city for ant to start in
@@ -33,10 +33,6 @@ def createETA(table, size):
         for col in range(0, size):
             if row != col:
                 eta[row][col] = ETA_VAR / table[row][col]
-    # NOTE taken out cuz of div by zero along axis warning error
-    # eta = np.reciprocal(table) * ETA_VAR
-    # for diag in range(0, size):
-    #     eta[diag][diag] = 0
     return eta
 
 # tao initially set to INIT_PHER, will change throughout func.
@@ -45,41 +41,6 @@ def createTAO(size):
     for diag in range(0, size):
         tao[diag][diag] = 0
     return tao
-
-# NOTE... not sure the math checks out on this one...
-# tao^alpha * eta^beta won't change, can do that ahead, but sum of allowed, need at decision.
-# just doing the top of bad function for now.
-# def bigBad(tao, eta, size):
-#     prob = np.zeros((size, size))
-#     for row in range(0, size):
-#         for col in range(0, size):
-#             prob[row][col] = pow(tao[row][col], ALPHA) * \
-#                 pow(eta[row][col], BETA)
-
-#     return prob
-
-# # NOTE this function is currently not taking into account the fact that
-# # all the tours are two possible ways.  so 1->2 pheromone != 2->1.
-# def evapAndDist(colony, fit, table, tao, size):
-
-#     deltaTao = np.zeros((size, size))
-#     for ant in range(0, ANTS):
-#         for i in range(0, size - 1):
-#             deltaTao[colony[ant][i]][colony[ant][i+1]] += Q / fit[ant]# * table[colony[ant][i]][colony[ant][i+1]]
-#         # added in for symmetric graphs
-#             deltaTao[colony[ant][i+1]][colony[ant][i]] += Q / fit[ant]# * table[colony[ant][i+1]][colony[ant][i]]
-
-#         # add in back to front here...
-#         deltaTao[colony[ant][size - 1]][colony[ant][0]] += Q / fit[ant]# * table[colony[ant][size - 1]][colony[ant][0]] 
-#     # added in for symmetric graphs
-#         deltaTao[colony[ant][0]][colony[ant][size - 1]] += Q / fit[ant]# * table[colony[ant][0]][colony[ant][size - 1]] 
-   
-#     # evaporate and add in new stuff.
-#     for row in range(0, size):
-#         for col in range(0, size):
-#             tao[row][col] = (tao[row][col] + deltaTao[row][col]) * (1 - RHO)
-
-#     return tao
 
 def goTravel(ant, tao, eta, size):
     while len(ant) < size:
@@ -139,11 +100,11 @@ def main():
         #     print("COLONY B4 TRAVEL:", colony)
         for ant in colony:
             ant = goTravel(ant, tao, eta, size)
-        if i % 200 == 0:
+        if i == 0 or (i+1) % 20 == 0:
         #     print("COLONY AFTER TRAVEL:")
         #     for ant in colony:
         #         print(ant, "fitness:", findTourLen(ant, table))
-            print("AVG FIT:", avgFitness(colony, table))
+            print("GEN:", str(i+1).zfill(4), "AVG FIT: {:.2f}".format(avgFitness(colony, table)))
         for ant in colony:
             tao = updatePheromones(ant, tao, table)
         tao = evapPheromones(tao)
