@@ -5,6 +5,7 @@ from GAtools import avgFitness
 from tools import *
 import numpy as np
 import random
+import warnings #this module is being used to get rid of the runtime warning
 
 ################################################################################
 # ETA is computed at beginning of function from table & distances between cities
@@ -19,7 +20,7 @@ Q = 937 # pher put down along path like Q?...
 ETA_VAR = 100 #eta found by this divided by length?
 RHO = .1
 ALPHA, BETA = 2, 2
-TITLE = './datasets/twentysix937.txt'
+TITLE = './datasets/five19.txt'
 
 # chooses a random city for ant to start in
 def createAnt(size):
@@ -34,6 +35,12 @@ def createETA(table, size):
         for col in range(0, size):
             if row != col:
                 eta[row][col] = ETA_VAR / table[row][col]
+    #div by zero along axis warning error fixed using warnings module!
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        eta = np.reciprocal(table) * ETA_VAR
+        for diag in range(0, size):
+            eta[diag][diag] = 0
     return eta
 
 # tao initially set to INIT_PHER, will change throughout func.
