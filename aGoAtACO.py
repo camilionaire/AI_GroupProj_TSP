@@ -14,6 +14,7 @@ ANTS = 10
 ITERS = 500
 INIT_PHER = 1 # init put on tao
 # IMPORTANT Q=100 FOR 25 MAP, Q=1 FOR 4 MAP
+# I also don't know if ^^^ this works, need more testing.
 Q = 10 # pher put down along path like Q?...
 ETA_VAR = 1 #eta found by this divided by length?
 RHO = .1
@@ -89,10 +90,6 @@ def main():
     # for the number of... eventually iterations
     for i in range(0, ITERS):
         colony = []
-        fitness = []
-        # BUG, I don't know if this approach works
-        # top_prob = bigBad(tao, eta, size)
-    # all of the ants travel here
         for j in range(0, ANTS):
             ant = createAnt(size)
             colony.append(ant)
@@ -113,15 +110,6 @@ def main():
         #     print(tao)
         
 
-        # BUG this doesn't seem to work, reworking
-        # for ant in colony:
-        #     makeTravelChoices(ant, top_prob, size)
-        #     fitness.append(findTourLen(ant, table))
-        # tao = evapAndDist(colony, fitness, table, tao, size)
-        # if i == 0 or (i+1) % 400 == 0:
-        #     print("Gen:", i+1, "Average Fitness: ", avgFitness(colony, table))
-        #     print("TAO:\n", tao)
-            # print(tao)
 
 if __name__ == "__main__":
     main()
