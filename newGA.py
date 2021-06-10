@@ -7,15 +7,16 @@ import random
 import time
 
 ################################################################################
-POPULATION = 30
-GENERATIONS = 15000
-MUT_PRO = .044
+POPULATION = 150
+GENERATIONS = 5000
+MUT_PRO = .05
 EXTRA_CHANCE = 0 # for providing a little extra chance for low pop scores
-TITLE = './datasets/fortyeight33523.txt' # testing if run from main()
+# TITLE = './datasets/fortyeight33523.txt' # testing if run from main()
 ################################################################################
 # POP / GEN / MUT
 # 30 / 15000 / .045 best so far for 48cities sol 34300
 # 30 / 15000 / .044 scored 34001 in gen 14381, had weird graph
+# 100 / 10000 / .05 got a 937 for 26 puzzle, but found in gen 2500.
 # TODO find something to either beat that for 48 puzzle
 # or get a good mix to crack the 42 puzzle.
 
