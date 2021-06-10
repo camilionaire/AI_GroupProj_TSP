@@ -32,8 +32,8 @@ def pass_filename(option1, option2):
 def call_algorithm(option2, my_table):
     print(option2)
     if option2 == 1:
-        # ga_main(my_table)
-        geneticAlgorithm(my_table)
+        ga_main(my_table)
+        # geneticAlgorithm(my_table)
     elif option2 == 2:
         # get's the solution to the problem
         hillClimb = simuAnneal(my_table)
