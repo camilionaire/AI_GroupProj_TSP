@@ -9,8 +9,8 @@ SELECTIVITY = 0.15
 
 
 class Population:
-    def __init__(self, bag, matrix):
-        self.population = bag
+    def __init__(self, population, matrix):
+        self.population = population
         self.generation = []
         self.score = 0
         self.score_history = []
@@ -73,6 +73,7 @@ class Population:
         print(history)
         plt.plot(range(len(history)), history, color="skyblue")
         plt.show()
+
 
 def swap(chromosome):
     father, mother = np.random.choice(len(chromosome), 2)
