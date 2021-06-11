@@ -1,11 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-INITIAL_POPULATION = 50
-ITERATION = 5000
-MUTATION = 0.4
+INITIAL_POPULATION = 70
+ITERATION = 3000
+MUTATION = 0.3
 CROSS = 0.5
-SELECTIVITY = 0.15
+SELECTIVITY = 0.14
 
 
 class Population:
@@ -13,6 +13,7 @@ class Population:
         self.population = population
         self.generation = []
         self.score = 0
+        self.avg = 0
         self.score_history = []
         self.best = None
         self.matrix = matrix
@@ -27,6 +28,7 @@ class Population:
     def evaluate(self):
         distances = np.asarray([self.fitness(chromosome) for chromosome in self.population])
         self.score = np.min(distances)
+        self.avg = sum(distances)/len(distances)
         self.best = self.population[distances.tolist().index(self.score)]
         self.generation.append(self.best)
         if False in (distances[0] == distances):
@@ -70,7 +72,6 @@ class Population:
         return new_gen
 
     def plot_graph(self, history):
-        print(history)
         plt.plot(range(len(history)), history, color="skyblue")
         plt.show()
 
@@ -91,10 +92,11 @@ def control(cities, matrix):
         population.select_parents(INITIAL_POPULATION * SELECTIVITY)
         history.append(population.score)
         if i % 300 == 0:
-            print(f"Generation", i, ": Average fitness score:", population.score)
+            print(f"Generation", i, ": Average fitness score:", population.avg, "Best of this gen:", population.score)
         if population.score < score:
             best = population.best
-            best_history.append(best)
+            average = population.avg
+            best_history.append(average)
             score = population.score
         children = population.crossover_mutation(CROSS, MUTATION)
         population = Population(children, population.matrix)
