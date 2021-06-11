@@ -4,51 +4,12 @@
 #  AI algorithms to solve it.
 #
 ################################################################################
+from aGoAtACO import antColonyOpt
 import numpy as np
-import random
-import sys
-import PySimpleGUI as sg
 from simAnTSP import *
 from ga import ga_main
-from antColony import *
-
-
-# finds the current tour length.
-def findTourLen(arr, table):
-    total = 0
-    for i in range(0, len(arr)):
-        if i == (len(arr) - 1):
-            total = total + table[arr[i]][arr[0]]
-        else:
-            total = total + table[arr[i]][arr[i + 1]]
-    return total
-
-
-# creates a random initial arrangement of size
-def createRandoArr(size):
-    an_array = [None] * size
-
-    for i in range(0, size):
-        a_city = random.randint(0, size - 1)
-        while a_city in an_array:
-            a_city = random.randint(0, size - 1)
-        an_array[i] = a_city
-
-    return an_array
-
-
-# true if arr1 is better, false otherswise
-def isBetter(arr1, arr2, table):
-    # it always will choose to move on the plateau
-    if findTourLen(arr1, table) <= findTourLen(arr2, table):
-        return True
-    else:
-        return False
-
-
-# returns true if a rando # (0, 1] is less than some prob
-def decision(prob):
-    return random.random() < prob
+from newGA import geneticAlgorithm
+import PySimpleGUI as sg
 
 
 def pass_filename(option1, option2):
@@ -74,15 +35,16 @@ def call_algorithm(option2, my_table):
     print(option2)
     if option2 == 1:
         ga_main(my_table)
+        # geneticAlgorithm(my_table)
     elif option2 == 2:
+        # get's the solution to the problem
         hillClimb = simuAnneal(my_table)
-        print(hillClimb)
-        print(findTourLen(hillClimb, my_table))
+        # prints out the solution to the problem
+        print("\nThe final path we found is:\n", hillClimb)
+        print("\nIt's path length is: ", findTourLen(hillClimb, my_table), "\n")
     elif option2 == 3:
-        print("calling ACO")
-        aco_main(my_table)
-
-
+        print("calling ACO\n")
+        antColonyOpt(my_table)
 
 
 def main():
@@ -93,6 +55,10 @@ def main():
     # else:
     #
 
+    #option1 = input("Please select the number of cities: \n 1. 5: (Best result: 19) \n 2. 26: (Best result: 937)\n 3. 42: (Best result: 699) \n 4. 48: (Best result: 33523) \n")
+    #option2 = input("Please choose the algorithm to solve the TSP: \n 1. Genetic Algorithm. \n 2. Simulated Annealing Algorithm.\n 3. Ant colony optimization \n")
+
+    #pass_filename(int(option1), int(option2))
     event, values = sg.Window('Please select the number of cities: \n', [[sg.Text('Select one -> '), sg.Listbox(
         ['1. 5: (Best result: 19)', '2. 26: (Best result: 937)', '3. 42: (Best result: 699)',
          '4. 48: (Best result: 33523)'], size=(30, 4), key='citynum')], [sg.Button('Ok'), sg.Button('Cancel')]]).read(
@@ -126,13 +92,6 @@ def main():
     else:
         sg.popup_cancel('user cancelled')
         exit()
-
-    # pass_filename(option1, option2)
-    # option1 = input("Please select the number of cities: \n 1. 5: (Best result: 19) \n 2. 26: (Best result: 937)\n 3. 42: (Best result: 699) \n 4. 48: (Best result: 33523) \n")
-    # option2 = input("Please choose the algorithm to solve the TSP: \n 1. Genetic Algorithm. \n 2. Simulated Annealing Algorithm.\n 3. Ant colony optimization \n")
-
-    # pass_filename(int(option1), int(option2))
-
 
 if __name__ == "__main__":
     main()
