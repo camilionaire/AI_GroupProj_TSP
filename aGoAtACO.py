@@ -18,11 +18,12 @@ import time
 # Q = 937, ALPHA=2, BETA=2 works sometimes, falls into local minima
 #48puzzle: ants=100, iters=200, 1, 900, 900, .1, alpha=2, beta=2 under 40k.
 # ^^^ not consistent tho, fails to local minima sometimes.
-ANTS = 96
-ITERS = 200
+#48puzzle, ants=30, iters=400, 1, 900, 900, .1, 2, 2 seems to get under 40k
+ANTS = 30
+ITERS = 400
 INIT_PHER = 1 # init put on tao
 Q = 900 # pher put down along path like Q?... maybe have it optimal sol?
-ETA_VAR = 900 #eta found by this divided by length?
+ETA_VAR = 900 # eta found by this divided by length?
 RHO = .1 # standard rho
 ALPHA, BETA = 2, 2
 # TITLE = './datasets/five19.txt'
@@ -100,6 +101,7 @@ def antColonyOpt(table):
     bestie = [] # path of best tour
     greatestGen = 0 # gen best is found
     xArray, yArray = [], []
+    homogeny, prevAvg = 0, 0
 ################################################################################
     size = table.shape[0] #finds size of map
     print("TABLE AVERAGE", np.average(table))
@@ -128,12 +130,22 @@ def antColonyOpt(table):
             bestie = bestInGen
             greatestGen = i+1
 
-        if i == 0 or (i+1) % 10 == 0:
-            # avg = avgFitness(colony, table)
+        if i == 0:
+            print("GEN:", str(i+1).zfill(4), "AVG FIT: {:.2f}".format(np.average(antsLen)))
+        if (i+1) % 5 == 0:
             avg = np.average(antsLen)
-            print("GEN:", str(i+1).zfill(4), "AVG FIT: {:.2f}".format(avg))
+            if prevAvg != avg: homogeny = 0
+            else:
+                print("Homogeny found.")
+                homogeny += 1
+                if homogeny == 3: # if it get's stuck in a rut
+                    break
+            prevAvg = avg
             xArray.append(i+1)
             yArray.append(avg)
+            if (i+1) % 10 == 0:
+                print("GEN:", str(i+1).zfill(4), "AVG FIT: {:.2f}".format(avg))
+                
         # if (i+1) % 500 == 0:
         #     print("NEW TAO, HOPEFULLY:")
         #     print(tao)
@@ -153,7 +165,7 @@ def antColonyOpt(table):
         file.write(str(row) + "\n")
     print("FINAL COLONY AFTER TRAVEL:")
     for ant in colony:
-        print(ant, "fitness:", findTourLen(ant, table))
+        print("fitness:", findTourLen(ant, table), end=", ")
     print("\nFINAL GEN:", str(i+1).zfill(4), "AVG FIT: {:.2f}".format(avgFitness(colony, table)))
 
     print("Best Tour:", bestEver, " Found in Gen:", greatestGen)

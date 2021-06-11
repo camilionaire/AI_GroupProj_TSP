@@ -7,9 +7,10 @@ import random
 import time
 
 ################################################################################
-POPULATION = 30
-GENERATIONS = 15000
-MUT_PRO = .044
+POPULATION = 150
+GENERATIONS = 5000
+MUT_PRO = .05
+# this bottom var doesn't seem to work, hits heterogenous state too easily?
 EXTRA_CHANCE = 0 # for providing a little extra chance for low pop scores
 TITLE = './datasets/fortyeight33523.txt' # testing if run from main()
 ################################################################################
