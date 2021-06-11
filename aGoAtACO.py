@@ -19,11 +19,11 @@ import time
 #48puzzle: ants=100, iters=200, 1, 900, 900, .1, alpha=2, beta=2 under 40k.
 # ^^^ not consistent tho, fails to local minima sometimes.
 #48puzzle, ants=30, iters=400, 1, 900, 900, .1, 2, 2 seems to get under 40k
-ANTS = 30
+ANTS = 20
 ITERS = 400
 INIT_PHER = 1 # init put on tao
-Q = 900 # pher put down along path like Q?... maybe have it optimal sol?
-ETA_VAR = 900 # eta found by this divided by length?
+Q = 100 # pher put down along path like Q?... maybe have it optimal sol?
+ETA_VAR = 100 # eta found by this divided by length?
 RHO = .1 # standard rho
 ALPHA, BETA = 2, 2
 # TITLE = './datasets/five19.txt'
@@ -136,9 +136,9 @@ def antColonyOpt(table):
             avg = np.average(antsLen)
             if prevAvg != avg: homogeny = 0
             else:
-                print("Homogeny found.")
                 homogeny += 1
-                if homogeny == 3: # if it get's stuck in a rut
+                if homogeny == 4: # if it get's stuck in a rut
+                    print("HOMOGENY FOUND.")
                     break
             prevAvg = avg
             xArray.append(i+1)
@@ -163,12 +163,12 @@ def antColonyOpt(table):
     file = open("finalTao.txt", "w")
     for row in tao:
         file.write(str(row) + "\n")
-    print("FINAL COLONY AFTER TRAVEL:")
+    print("\nFINAL COLONY FITNESS AFTER TRAVEL:")
     for ant in colony:
-        print("fitness:", findTourLen(ant, table), end=", ")
-    print("\nFINAL GEN:", str(i+1).zfill(4), "AVG FIT: {:.2f}".format(avgFitness(colony, table)))
+        print(findTourLen(ant, table), end=", ")
+    print("\n\nFINAL GEN:", str(i+1).zfill(4), "AVG FIT: {:.2f}".format(avgFitness(colony, table)))
 
-    print("Best Tour:", bestEver, " Found in Gen:", greatestGen)
+    print("\nBest Tour:", bestEver, " Found in Gen:", greatestGen)
     print("Path: ", bestie)
 
     elapsed = time.time() - start
