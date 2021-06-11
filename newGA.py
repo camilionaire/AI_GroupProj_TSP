@@ -16,6 +16,7 @@ TITLE = './datasets/fortyeight33523.txt' # testing if run from main()
 # POP / GEN / MUT
 # 30 / 15000 / .045 best so far for 48cities sol 34300
 # 30 / 15000 / .044 scored 34001 in gen 14381, had weird graph
+# 100 / 10000 / .05 got a 937 for 26 puzzle, but found in gen 2500.
 # TODO find something to either beat that for 48 puzzle
 # or get a good mix to crack the 42 puzzle.
 
@@ -45,16 +46,15 @@ def makeBabies(tot, better, pop):
     return child
 
 def geneticAlgorithm(table):
-    start = time.time()
-
-    size = table.shape[0] # gets size of array
 ## TESTING / PRINTING DATA #####################################################
+    start = time.time()
     bestEver = 99999999 # best tour so far
     bestie = [] # path of best tour
     greatestGen = 0 # gen best is found
     xArray, yArray = [], []
 ################################################################################
 
+    size = table.shape[0] # gets size of array
     oldGen = createPopulation(size)
     tourArray = getLenArray(oldGen, table)
     print("\nINITIAL GENERATIONAL AVG: {:.2f}\n".format(avgFitness(oldGen, table)))
@@ -68,7 +68,6 @@ def geneticAlgorithm(table):
             newGen.append(child)
         oldGen = newGen
         tourArray = getLenArray(oldGen, table)
-
         # end of real functional stuff
 
         # testing / output for seeing information.

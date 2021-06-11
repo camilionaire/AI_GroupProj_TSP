@@ -1,30 +1,34 @@
 ################################################################################
 # This will be an attempt at a functional ant colony optimization function
 
-from GAtools import avgFitness
+from GAtools import avgFitness, getLenArray
 from tools import *
 import numpy as np
 import random
 import warnings #this module is being used to get rid of the runtime warning
+import time
 
 ################################################################################
 # ETA is computed at beginning of function from table & distances between cities
 # TAO is set at beginning based on size of table, init to all 1's (no ants!)
 # both ETA and TAO are tables that will be the size of the table examined.
 
-# for 26 puzzle: ANTS=20, ITERS=1000, INIT_PHER/ETA_VAR=100
+#5puzze: ant=10, iters=5000, 1, 1, 1, .1, alpha=1, beta=2
+#26puzzle: ANTS=20, ITERS=1000, INIT_PHER/ETA_VAR=100
 # Q = 937, ALPHA=2, BETA=2 works sometimes, falls into local minima
-ANTS = 10
-ITERS = 2000
+#48puzzle: ants=100, iters=200, 1, 900, 900, .1, alpha=2, beta=2 under 40k.
+# ^^^ not consistent tho, fails to local minima sometimes.
+ANTS = 96
+ITERS = 200
 INIT_PHER = 1 # init put on tao
-Q = 1 # pher put down along path like Q?... maybe have it optimal sol?
-ETA_VAR = 1 #eta found by this divided by length?
-RHO = .1
-ALPHA, BETA = 1, 2
-TITLE = './datasets/five19.txt'
+Q = 900 # pher put down along path like Q?... maybe have it optimal sol?
+ETA_VAR = 900 #eta found by this divided by length?
+RHO = .1 # standard rho
+ALPHA, BETA = 2, 2
+# TITLE = './datasets/five19.txt'
 # TITLE = './datasets/twentysix937.txt'
 # TITLE = './datasets/fortytwo699.txt'
-# TITLE = './datasets/fortyeight33523.txt'
+TITLE = './datasets/fortyeight33523.txt'
 
 # chooses a random city for ant to start in
 def createAnt(size):
@@ -74,24 +78,31 @@ def goTravel(ant, tao, eta, size):
                 break
     return ant
     
-def updatePheromones(ant, tao, table):
+def updatePheromones(ant, tao, table, mult):
     size = table.shape[0]
     tour = findTourLen(ant, table)
     delta = Q / tour
     # this is one directional... doesn't update other way.
     for city in range(0, size - 1):
-        tao[ant[city]][ant[city + 1]] += delta
-        tao[ant[city + 1]][ant[city]] += delta # for symmetric graphs
-    tao[ant[city + 1]][ant[0]] += delta
-    tao[ant[0]][ant[city + 1]] += delta
+        tao[ant[city]][ant[city + 1]] += delta * mult
+        tao[ant[city + 1]][ant[city]] += delta * mult# for symmetric graphs
+    tao[ant[city + 1]][ant[0]] += delta * mult
+    tao[ant[0]][ant[city + 1]] += delta * mult
     return tao
 
 def evapPheromones(tao):
     return tao * (1 - RHO)
 
-def main():
-    table = np.loadtxt(TITLE)
+def antColonyOpt(table):
+## TESTING / PRINTING DATA #####################################################
+    start = time.time()
+    bestEver = 99999999 # best tour so far
+    bestie = [] # path of best tour
+    greatestGen = 0 # gen best is found
+    xArray, yArray = [], []
+################################################################################
     size = table.shape[0] #finds size of map
+    print("TABLE AVERAGE", np.average(table))
     eta = createETA(table, size)
     tao = createTAO(size)
 
@@ -108,17 +119,32 @@ def main():
         #     print("COLONY B4 TRAVEL:", colony)
         for ant in colony:
             ant = goTravel(ant, tao, eta, size)
-        if i == 0 or (i+1) % 50 == 0:
-        #     print("COLONY AFTER TRAVEL:")
-        #     for ant in colony:
-        #         print(ant, "fitness:", findTourLen(ant, table))
-            print("GEN:", str(i+1).zfill(4), "AVG FIT: {:.2f}".format(avgFitness(colony, table)))
+
+        antsLen = getLenArray(colony, table)
+        bestGen = min(antsLen)
+        bestInGen = colony[antsLen.index(bestGen)]
+        if bestGen < bestEver:
+            bestEver = bestGen
+            bestie = bestInGen
+            greatestGen = i+1
+
+        if i == 0 or (i+1) % 10 == 0:
+            # avg = avgFitness(colony, table)
+            avg = np.average(antsLen)
+            print("GEN:", str(i+1).zfill(4), "AVG FIT: {:.2f}".format(avg))
+            xArray.append(i+1)
+            yArray.append(avg)
         # if (i+1) % 500 == 0:
         #     print("NEW TAO, HOPEFULLY:")
         #     print(tao)
-        for ant in colony:
-            tao = updatePheromones(ant, tao, table)
         tao = evapPheromones(tao)
+        for ant in colony:
+            # NOTE giving it a little bit of elitism here.
+            if ant == bestInGen:
+                mult = 2
+            else:
+                mult = 1
+            tao = updatePheromones(ant, tao, table, mult)
         
 # NOTE TESTING INFORMATION, CAN BE COMMENTED / ADJUSTED
     # print("FINAL TAO: \n", tao)
@@ -128,8 +154,19 @@ def main():
     print("FINAL COLONY AFTER TRAVEL:")
     for ant in colony:
         print(ant, "fitness:", findTourLen(ant, table))
-    print("FINAL GEN:", str(i+1).zfill(4), "AVG FIT: {:.2f}".format(avgFitness(colony, table)))
+    print("\nFINAL GEN:", str(i+1).zfill(4), "AVG FIT: {:.2f}".format(avgFitness(colony, table)))
 
+    print("Best Tour:", bestEver, " Found in Gen:", greatestGen)
+    print("Path: ", bestie)
+
+    elapsed = time.time() - start
+    print("\nGA ran in {:.3f} seconds".format(elapsed))
+    plot_results(xArray, yArray)
+
+
+def main():
+    table = np.loadtxt(TITLE)
+    antColonyOpt(table)
 
 
 if __name__ == "__main__":

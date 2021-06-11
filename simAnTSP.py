@@ -9,10 +9,11 @@ ITERATIONS = 200000
 TEMP_MOD = 400
 ################################################################################
 # ITERATIONS / TEMP_MOD:
+# bigger numbers in difference of distance, we want smaller temp mods
+# formula:  temp = (ITERATIONS - i) / TEMP_MOD 
 # 200,000 / 400 works REAL good for the 48 city with big distances
 # 200,000 / 3000 works good for 42 and 26 puzzles
 # 100 / ANY#  I suspect everything works good for 5 city puzzle
-
 
 # main function
 def simuAnneal(table):
@@ -29,10 +30,12 @@ def simuAnneal(table):
     for i in range(0, ITERATIONS):
         # decreasing temperature
 
-        temp = (ITERATIONS - i) / TEMP_MOD #this works good on 42
+        temp = (ITERATIONS - i) / TEMP_MOD 
         arr2 = findNeighborSA(arr1)
+        # if the neighbor is better, we make that choice
         if isBetter(arr2, arr1, table):
             arr1 = arr2.copy()
+            # for storing data on our best path so far
             curr = findTourLen(arr1, table)
             if  curr < bestEver:
                 bestEver = curr
@@ -53,6 +56,7 @@ def simuAnneal(table):
             yArray.append(findTourLen(arr1, table))
 
     
+##### OUTPUT AND GRAPH DATA#####################################################
     print("\nBEST TOUR:", bestEver, " FOUND IN ITERATION:", greatestGen)
     print("PATH: ", bestie)
 
@@ -60,7 +64,7 @@ def simuAnneal(table):
     print("\nSA ran in {:.3f} seconds".format(elapsed))
     # this is the part that prints the results.
     plot_results(xArray, yArray)
-    
+################################################################################
     return arr1
 
 # finds a neighbor by taking a random slice and reversing order
