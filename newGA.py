@@ -46,16 +46,15 @@ def makeBabies(tot, better, pop):
     return child
 
 def geneticAlgorithm(table):
-    start = time.time()
-
-    size = table.shape[0] # gets size of array
 ## TESTING / PRINTING DATA #####################################################
+    start = time.time()
     bestEver = 99999999 # best tour so far
     bestie = [] # path of best tour
     greatestGen = 0 # gen best is found
     xArray, yArray = [], []
 ################################################################################
 
+    size = table.shape[0] # gets size of array
     oldGen = createPopulation(size)
     tourArray = getLenArray(oldGen, table)
     print("\nINITIAL GENERATIONAL AVG: {:.2f}\n".format(avgFitness(oldGen, table)))
@@ -69,7 +68,6 @@ def geneticAlgorithm(table):
             newGen.append(child)
         oldGen = newGen
         tourArray = getLenArray(oldGen, table)
-
         # end of real functional stuff
 
         # testing / output for seeing information.
