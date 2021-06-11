@@ -19,11 +19,11 @@ import time
 #48puzzle: ants=100, iters=200, 1, 900, 900, .1, alpha=2, beta=2 under 40k.
 # ^^^ not consistent tho, fails to local minima sometimes.
 #48puzzle, ants=30, iters=400, 1, 900, 900, .1, 2, 2 seems to get under 40k
-ANTS = 20
+ANTS = 50
 ITERS = 400
 INIT_PHER = 1 # init put on tao
-Q = 100 # pher put down along path like Q?... maybe have it optimal sol?
-ETA_VAR = 100 # eta found by this divided by length?
+Q = 10 # pher put down along path like Q?... maybe have it optimal sol?
+ETA_VAR = 10 # eta found by this divided by length?
 RHO = .1 # standard rho
 ALPHA, BETA = 2, 2
 # TITLE = './datasets/five19.txt'
@@ -149,11 +149,13 @@ def antColonyOpt(table):
         # if (i+1) % 500 == 0:
         #     print("NEW TAO, HOPEFULLY:")
         #     print(tao)
+        # evaporates previous pheromes, and then adds the
+        # ants pheromones to the table.
         tao = evapPheromones(tao)
         for ant in colony:
             # NOTE giving it a little bit of elitism here.
             if ant == bestInGen:
-                mult = 2
+                mult = 5
             else:
                 mult = 1
             tao = updatePheromones(ant, tao, table, mult)
