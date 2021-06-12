@@ -26,6 +26,7 @@ Q = 900 # pher put down along path like Q?... maybe have it optimal sol?
 ETA_VAR = 900 # eta found by this divided by length?
 RHO = .1 # standard rho
 ALPHA, BETA = 2, 2
+ELITE_MULT = 2 # gives best path in gen a bonus multiplier.
 # TITLE = './datasets/five19.txt'
 # TITLE = './datasets/twentysix937.txt'
 # TITLE = './datasets/fortytwo699.txt'
@@ -155,7 +156,7 @@ def antColonyOpt(table):
         for ant in colony:
             # NOTE giving it a little bit of elitism here.
             if ant == bestInGen:
-                mult = 5
+                mult = ELITE_MULT
             else:
                 mult = 1
             tao = updatePheromones(ant, tao, table, mult)
